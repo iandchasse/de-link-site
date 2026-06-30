@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>de-link</title>
   <style>
     * { box-sizing: border-box; }
@@ -148,17 +149,17 @@
     #wrap {
       position: relative;
       z-index: 2;
-      max-width: 520px;
+      max-width: 640px;
       margin: 0 auto;
-      padding: 0 20px;
+      padding: 0 24px;
     }
 
     /* ---- logo ---- */
     #logo-area {
-      padding: 52px 0 10px;
+      padding: 64px 0 12px;
     }
     #logo-area img.wordmark {
-      width: 380px;
+      width: 420px;
       max-width: 100%;
       /* invert the black SVG paths to white on dark bg */
       filter: invert(1);
@@ -173,10 +174,10 @@
     }
     #tagline {
       font-family: "Courier New", Courier, monospace;
-      font-size: 14px;
+      font-size: 17px;
       color: #d0d0d0;
-      margin: 8px 0 0;
-      letter-spacing: 1px;
+      margin: 10px 0 0;
+      letter-spacing: 1.5px;
       text-shadow: 0 1px 4px rgba(0,0,0,0.8);
     }
 
@@ -185,14 +186,14 @@
       border: none;
       border-top: 1px solid #444444;
       border-bottom: 1px solid #000000;
-      margin: 26px auto;
-      width: 200px;
+      margin: 30px auto;
+      width: 260px;
     }
 
     /* ---- learn more — Win95 raised button ---- */
     #learn-more {
       font-family: "Courier New", Courier, monospace;
-      font-size: 12px;
+      font-size: 16px;
     }
     #learn-more a {
       color: #111111;
@@ -218,14 +219,14 @@
     #newsletter { margin: 0 auto; }
     #newsletter p {
       font-family: "Courier New", Courier, monospace;
-      font-size: 13px;
+      font-size: 15px;
       color: #d0d0d0;
-      margin: 0 0 10px;
+      margin: 0 0 12px;
       text-shadow: 0 1px 4px rgba(0,0,0,0.8);
     }
     #newsletter input[type="email"] {
       font-family: "Courier New", Courier, monospace;
-      font-size: 12px;
+      font-size: 14px;
       border: 2px solid;
       border-top-color: #555555;
       border-left-color: #555555;
@@ -240,7 +241,7 @@
     #newsletter input[type="email"]::placeholder { color: #aaaaaa; }
     #newsletter button[type="submit"] {
       font-family: "Courier New", Courier, monospace;
-      font-size: 12px;
+      font-size: 14px;
       background: #c0c0c0;
       color: #111111;
       border: 2px solid;
@@ -264,38 +265,38 @@
     #retro-buttons {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      max-width: 500px;
+      gap: 10px;
+      max-width: 580px;
       margin: 0 auto;
     }
     .rlink {
       display: flex;
       align-items: center;
-      gap: 10px;
-      padding: 10px 13px;
+      gap: 12px;
+      padding: 13px 16px;
       text-decoration: none;
       border: 2px solid;
       cursor: pointer;
-      min-height: 54px;
+      min-height: 64px;
     }
     .rlink svg {
-      width: 22px;
-      height: 22px;
+      width: 26px;
+      height: 26px;
       flex-shrink: 0;
       fill: currentColor;
     }
-    .rlink-text { display: flex; flex-direction: column; text-align: left; line-height: 1.3; }
+    .rlink-text { display: flex; flex-direction: column; text-align: left; line-height: 1.4; }
     .rlink-primary {
       font-family: "Courier New", Courier, monospace;
-      font-size: 10px;
+      font-size: 13px;
       font-weight: bold;
       letter-spacing: 0.5px;
     }
     .rlink-sub {
       font-family: "Courier New", Courier, monospace;
-      font-size: 8px;
+      font-size: 11px;
       letter-spacing: 0.2px;
-      margin-top: 3px;
+      margin-top: 4px;
       opacity: 0.85;
     }
     @keyframes fl-patreon {
@@ -314,16 +315,22 @@
       0%,49%   { background:#f0f0f0; color:#111; border-color:#aaa; }
       50%,100% { background:#111; color:#ccc; border-color:#555; }
     }
-    .fl-patreon { animation: fl-patreon 2s   steps(1) infinite; }
-    .fl-kofi    { animation: fl-kofi   2s   steps(1) infinite 1s; }
-    .fl-discord { animation: fl-discord 1.8s steps(1) infinite 0.5s; }
-    .fl-github  { animation: fl-github  2.2s steps(1) infinite 0.9s; }
+    /* default: static dark state */
+    .fl-patreon { background:#1e0e0c; color:#F96854; border-color:#F96854; }
+    .fl-kofi    { background:#1e0c0c; color:#FF5E5B; border-color:#FF5E5B; }
+    .fl-discord { background:#0d0e1e; color:#7983f5; border-color:#5865F2; }
+    .fl-github  { background:#111111; color:#cccccc; border-color:#555555; }
+    /* hover / tap: rapid flash kicks in */
+    .fl-patreon:hover { animation: fl-patreon 0.35s steps(1) infinite; }
+    .fl-kofi:hover    { animation: fl-kofi    0.35s steps(1) infinite; }
+    .fl-discord:hover { animation: fl-discord 0.35s steps(1) infinite; }
+    .fl-github:hover  { animation: fl-github  0.35s steps(1) infinite; }
 
     /* ---- footer ---- */
     #footer {
       padding: 28px 0 44px;
       font-family: "Courier New", Courier, monospace;
-      font-size: 11px;
+      font-size: 13px;
       color: #777777;
       text-shadow: 0 1px 3px rgba(0,0,0,0.9);
     }
@@ -355,14 +362,16 @@
 
     <div id="newsletter">
       <p>mailing list &mdash; updates on hardware releases &amp; news</p>
-      <!--
-        Replace YOUR_FORM_ID with your Kit form ID.
-        Kit dashboard → Forms → your form → the number in the action URL.
-      -->
-      <form action="https://app.kit.com/forms/9627377/subscriptions" method="post">
+      <form id="kit-form" action="https://app.kit.com/forms/9627377/subscriptions" method="post">
         <input type="email" name="email_address" placeholder="your@email.com" required>
         <button type="submit">subscribe</button>
       </form>
+      <div id="kit-success" style="display:none;">
+        <p style="margin:0 0 6px;">you&rsquo;re on the list.</p>
+        <p style="font-size:12px; color:#888888; margin:0; text-shadow:none;">
+          confirmation email on the way &mdash; check spam if you don&rsquo;t see it.
+        </p>
+      </div>
     </div>
 
     <hr>
@@ -422,11 +431,29 @@
 
   </div>
   <script>
+    // Frontlight toggle
     const btn = document.getElementById('fl-btn');
     btn.addEventListener('click', () => {
       const on = document.body.classList.toggle('lit');
       btn.textContent = on ? '[ ◉ ] FRONTLIGHT' : '[ ○ ] FRONTLIGHT';
       btn.setAttribute('aria-pressed', on);
+    });
+
+    // Kit newsletter — submit via fetch so the page doesn't redirect
+    const kitForm = document.getElementById('kit-form');
+    const kitSuccess = document.getElementById('kit-success');
+    kitForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = kitForm.querySelector('input[type="email"]').value;
+      // no-cors: Kit gets the POST, we don't need to read the response
+      fetch(kitForm.action, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: 'email_address=' + encodeURIComponent(email)
+      });
+      kitForm.style.display = 'none';
+      kitSuccess.style.display = 'block';
     });
   </script>
 </body>
