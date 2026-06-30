@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>de-link</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      background-color: #1c1c1c;
+      color: #cccccc;
+      font-family: "Times New Roman", Times, serif;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+
+    /* =====================================================
+       TILED BACKGROUND
+       model-tile.gif is a 400×224 composite with the brick
+       pattern baked in: row 0 centres at x=100,300 and
+       row 1 centres at x=0,200 — true staggered rows.
+       bg-drift  : drifts one full tile (400×224) over 22s
+       bg-bounce : lifts whole layer 13px up every 2.6s
+       ===================================================== */
+    #bg-tile {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.28;
+      background-image: url('img/model-tile.gif');
+      background-repeat: repeat;
+      animation:
+        bg-drift   22s linear       infinite,
+        bg-bounce  2.6s ease-in-out infinite;
+      /* filter transition for frontlight toggle */
+      filter: none;
+      transition: filter 0.7s ease, opacity 0.7s ease;
+    }
+    /* when frontlight is ON:
+       sepia+saturate turns white screen pixels amber;
+       drop-shadow inside filter creates bloom around
+       those bright pixels only (dark PCB = no bloom) */
+    body.lit #bg-tile {
+      opacity: 0.38;
+      filter:
+        sepia(0.5) saturate(3.5) brightness(1.2)
+        drop-shadow(0 0  7px rgba(255, 175, 40, 0.55))
+        drop-shadow(0 0 20px rgba(255, 130,  0, 0.28));
+    }
+
+    /* per-model amber glow — one radial gradient per model centre
+       in the 400×224 composite tile, then tiled + synced to the
+       same bg-drift and bg-bounce as #bg-tile so each glow patch
+       stays locked to its own device as everything drifts.
+
+       Model centres inside the 400×224 tile (at display size 200×112):
+         row 0: (100, 56) and (300, 56)
+         row 1: (0, 168), (200, 168), (400, 168)   ← 0 and 400 are
+                                                      the same edge,
+                                                      included so the
+                                                      wrapped model
+                                                      gets its glow too
+    */
+    #bg-glow {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      background-image:
+        radial-gradient(ellipse 110px 66px at 100px  56px, rgba(255,175,40,0.20) 0%, transparent 100%),
+        radial-gradient(ellipse 110px 66px at 300px  56px, rgba(255,175,40,0.20) 0%, transparent 100%),
+        radial-gradient(ellipse 110px 66px at   0px 168px, rgba(255,175,40,0.20) 0%, transparent 100%),
+        radial-gradient(ellipse 110px 66px at 200px 168px, rgba(255,175,40,0.20) 0%, transparent 100%),
+        radial-gradient(ellipse 110px 66px at 400px 168px, rgba(255,175,40,0.20) 0%, transparent 100%);
+      background-size: 400px 224px;
+      background-repeat: repeat;
+      opacity: 0;
+      /* drift+bounce always run so position stays synced with
+         #bg-tile regardless of frontlight state */
+      animation:
+        bg-drift  22s linear       infinite,
+        bg-bounce  2.6s ease-in-out infinite;
+    }
+
+    /* GIF is 56 frames × ~83 ms = 4648 ms per full spin.
+       Screen faces the user at the halfway point, so a 0→1→0
+       pulse over 4648 ms locks the glow to the rotation. */
+    @keyframes glow-pulse {
+      0%   { opacity: 0;    }
+      50%  { opacity: 0.6;  }
+      100% { opacity: 0;    }
+    }
+    body.lit #bg-glow {
+      animation:
+        bg-drift   22s     linear       infinite,
+        bg-bounce   2.6s   ease-in-out  infinite,
+        glow-pulse  4.648s ease-in-out  infinite;
+      animation-delay: 0s, 0s, -3230ms;
+    }
+
+    @keyframes bg-drift {
+      from { background-position: 0px   0px; }
+      to   { background-position: 400px 224px; }
+    }
+    @keyframes bg-bounce {
+      0%,  100% { transform: translateY(0px);   }
+      45%, 55%  { transform: translateY(-13px); }
+    }
+
+    /* ---- frontlight toggle button ---- */
+    #fl-btn {
+      position: fixed;
+      bottom: 18px;
+      right: 18px;
+      z-index: 10;
+      font-family: "Courier New", Courier, monospace;
+      font-size: 10px;
+      letter-spacing: 0.5px;
+      background: #c0c0c0;
+      color: #111111;
+      border: 2px solid;
+      border-top-color: #ffffff;
+      border-left-color: #ffffff;
+      border-bottom-color: #808080;
+      border-right-color: #808080;
+      padding: 5px 11px;
+      cursor: pointer;
+      transition: background 0.4s ease, box-shadow 0.4s ease, color 0.4s ease;
+    }
+    #fl-btn:active {
+      border-top-color: #808080;
+      border-left-color: #808080;
+      border-bottom-color: #ffffff;
+      border-right-color: #ffffff;
+    }
+    body.lit #fl-btn {
+      background: #ffbe3c;
+      color: #111111;
+      box-shadow: 0 0 12px rgba(255, 185, 50, 0.9),
+                  0 0 28px rgba(255, 140,  0, 0.4);
+    }
+
+    /* =====================================================
+       CONTENT
+       ===================================================== */
+    #wrap {
+      position: relative;
+      z-index: 2;
+      max-width: 520px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* ---- logo ---- */
+    #logo-area {
+      padding: 52px 0 10px;
+    }
+    #logo-area img.wordmark {
+      width: 380px;
+      max-width: 100%;
+      /* invert the black SVG paths to white on dark bg */
+      filter: invert(1);
+      transition: filter 0.7s ease;
+    }
+    /* amber glow traces the letter edges when frontlight is on */
+    body.lit #logo-area img.wordmark {
+      filter: invert(1)
+        drop-shadow(0 0  6px rgba(255, 185, 40, 0.95))
+        drop-shadow(0 0 16px rgba(255, 140,  0, 0.65))
+        drop-shadow(0 0 36px rgba(255, 110,  0, 0.30));
+    }
+    #tagline {
+      font-family: "Courier New", Courier, monospace;
+      font-size: 14px;
+      color: #d0d0d0;
+      margin: 8px 0 0;
+      letter-spacing: 1px;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+    }
+
+    /* ---- divider — Win95 etched line on dark ---- */
+    hr {
+      border: none;
+      border-top: 1px solid #444444;
+      border-bottom: 1px solid #000000;
+      margin: 26px auto;
+      width: 200px;
+    }
+
+    /* ---- learn more — Win95 raised button ---- */
+    #learn-more {
+      font-family: "Courier New", Courier, monospace;
+      font-size: 12px;
+    }
+    #learn-more a {
+      color: #111111;
+      text-decoration: none;
+      display: inline-block;
+      padding: 4px 18px;
+      background-color: #c0c0c0;
+      border: 2px solid;
+      border-top-color: #ffffff;
+      border-left-color: #ffffff;
+      border-bottom-color: #808080;
+      border-right-color: #808080;
+    }
+    #learn-more a:hover { background-color: #b4b4b4; }
+    #learn-more a:active {
+      border-top-color: #808080;
+      border-left-color: #808080;
+      border-bottom-color: #ffffff;
+      border-right-color: #ffffff;
+    }
+
+    /* ---- newsletter ---- */
+    #newsletter { margin: 0 auto; }
+    #newsletter p {
+      font-family: "Courier New", Courier, monospace;
+      font-size: 13px;
+      color: #d0d0d0;
+      margin: 0 0 10px;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+    }
+    #newsletter input[type="email"] {
+      font-family: "Courier New", Courier, monospace;
+      font-size: 12px;
+      border: 2px solid;
+      border-top-color: #555555;
+      border-left-color: #555555;
+      border-bottom-color: #c0c0c0;
+      border-right-color: #c0c0c0;
+      background: #ffffff;
+      color: #111111;
+      padding: 4px 8px;
+      width: 200px;
+      outline: none;
+    }
+    #newsletter input[type="email"]::placeholder { color: #aaaaaa; }
+    #newsletter button[type="submit"] {
+      font-family: "Courier New", Courier, monospace;
+      font-size: 12px;
+      background: #c0c0c0;
+      color: #111111;
+      border: 2px solid;
+      border-top-color: #ffffff;
+      border-left-color: #ffffff;
+      border-bottom-color: #808080;
+      border-right-color: #808080;
+      padding: 4px 14px;
+      cursor: pointer;
+      margin-left: 4px;
+    }
+    #newsletter button[type="submit"]:hover { background: #b4b4b4; }
+    #newsletter button[type="submit"]:active {
+      border-top-color: #808080;
+      border-left-color: #808080;
+      border-bottom-color: #ffffff;
+      border-right-color: #ffffff;
+    }
+
+    /* ---- flash link buttons ---- */
+    #retro-buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+    .rlink {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 13px;
+      text-decoration: none;
+      border: 2px solid;
+      cursor: pointer;
+      min-height: 54px;
+    }
+    .rlink svg {
+      width: 22px;
+      height: 22px;
+      flex-shrink: 0;
+      fill: currentColor;
+    }
+    .rlink-text { display: flex; flex-direction: column; text-align: left; line-height: 1.3; }
+    .rlink-primary {
+      font-family: "Courier New", Courier, monospace;
+      font-size: 10px;
+      font-weight: bold;
+      letter-spacing: 0.5px;
+    }
+    .rlink-sub {
+      font-family: "Courier New", Courier, monospace;
+      font-size: 8px;
+      letter-spacing: 0.2px;
+      margin-top: 3px;
+      opacity: 0.85;
+    }
+    @keyframes fl-patreon {
+      0%,49%   { background:#F96854; color:#fff; border-color:#c94535; }
+      50%,100% { background:#1e0e0c; color:#F96854; border-color:#F96854; }
+    }
+    @keyframes fl-kofi {
+      0%,49%   { background:#FF5E5B; color:#fff; border-color:#cc3a37; }
+      50%,100% { background:#1e0c0c; color:#FF5E5B; border-color:#FF5E5B; }
+    }
+    @keyframes fl-discord {
+      0%,49%   { background:#5865F2; color:#fff; border-color:#3a46c4; }
+      50%,100% { background:#0d0e1e; color:#7983f5; border-color:#5865F2; }
+    }
+    @keyframes fl-github {
+      0%,49%   { background:#f0f0f0; color:#111; border-color:#aaa; }
+      50%,100% { background:#111; color:#ccc; border-color:#555; }
+    }
+    .fl-patreon { animation: fl-patreon 2s   steps(1) infinite; }
+    .fl-kofi    { animation: fl-kofi   2s   steps(1) infinite 1s; }
+    .fl-discord { animation: fl-discord 1.8s steps(1) infinite 0.5s; }
+    .fl-github  { animation: fl-github  2.2s steps(1) infinite 0.9s; }
+
+    /* ---- footer ---- */
+    #footer {
+      padding: 28px 0 44px;
+      font-family: "Courier New", Courier, monospace;
+      font-size: 11px;
+      color: #777777;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.9);
+    }
+    #footer a { color: #777777; }
+    #footer a:hover { color: #aaaaaa; }
+  </style>
+</head>
+<body>
+
+  <div id="bg-tile"></div>
+  <div id="bg-glow"></div>
+
+  <button id="fl-btn" aria-pressed="false">[ ○ ] FRONTLIGHT</button>
+
+  <div id="wrap">
+
+    <div id="logo-area">
+      <img class="wordmark" src="logos/full-logo-transparent.svg" alt="de-link">
+      <p id="tagline">open source microreader and development kit</p>
+    </div>
+
+    <hr>
+
+    <div id="learn-more">
+      <a href="about.html">[ learn more ]</a>
+    </div>
+
+    <hr>
+
+    <div id="newsletter">
+      <p>mailing list &mdash; updates on hardware releases &amp; news</p>
+      <!--
+        Replace YOUR_FORM_ID with your Kit form ID.
+        Kit dashboard → Forms → your form → the number in the action URL.
+      -->
+      <form action="https://app.kit.com/forms/9627377/subscriptions" method="post">
+        <input type="email" name="email_address" placeholder="your@email.com" required>
+        <button type="submit">subscribe</button>
+      </form>
+    </div>
+
+    <hr>
+
+    <div id="retro-buttons">
+
+      <!-- Patreon — solid P silhouette -->
+      <a href="https://www.patreon.com/iandchasse" target="_blank" class="rlink fl-patreon">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M2 2h7.5C14.9 2 18 5.4 18 9.5S14.9 17 9.5 17H6v5H2V2z"/>
+        </svg>
+        <span class="rlink-text">
+          <span class="rlink-primary">support me on patreon</span>
+          <span class="rlink-sub">first dibs on exclusive updates &amp; unit sales</span>
+        </span>
+      </a>
+
+      <!-- Ko-Fi — cup + handle + heart -->
+      <a href="https://ko-fi.com/iandchasse" target="_blank" class="rlink fl-kofi">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M3 8h14l-1.5 12H4.5L3 8zm14 2h1.5c1.7 0 2.5.9 2.5 2.2 0 1.3-.8 2.2-2.5 2.2H17v-4.4zM10 11c-.6-1.2.1-2 1-2 .9 0 1.6.8 1 2l-1 1.8L10 11z"/>
+        </svg>
+        <span class="rlink-text">
+          <span class="rlink-primary">support me on ko-fi</span>
+          <span class="rlink-sub">first dibs on exclusive updates &amp; unit sales</span>
+        </span>
+      </a>
+
+      <!-- Discord -->
+      <a href="https://discord.gg/zCnKFt4Y4P" target="_blank" class="rlink fl-discord">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057.102 18.08.116 18.1.133 18.113a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
+        </svg>
+        <span class="rlink-text">
+          <span class="rlink-primary">join the community</span>
+        </span>
+      </a>
+
+      <!-- GitHub -->
+      <a href="https://github.com/iandchasse/de-link" target="_blank" class="rlink fl-github">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
+        </svg>
+        <span class="rlink-text">
+          <span class="rlink-primary">follow the project</span>
+        </span>
+      </a>
+
+    </div>
+
+    <div id="footer">
+      &copy; de-link &mdash;
+      <a href="https://github.com/iandchasse/de-link" target="_blank">github</a>
+      &nbsp;|&nbsp;
+      <a href="https://discord.gg/zCnKFt4Y4P" target="_blank">discord</a>
+    </div>
+
+  </div>
+  <script>
+    const btn = document.getElementById('fl-btn');
+    btn.addEventListener('click', () => {
+      const on = document.body.classList.toggle('lit');
+      btn.textContent = on ? '[ ◉ ] FRONTLIGHT' : '[ ○ ] FRONTLIGHT';
+      btn.setAttribute('aria-pressed', on);
+    });
+  </script>
+</body>
+</html>
