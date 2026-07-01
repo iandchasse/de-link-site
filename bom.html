@@ -459,65 +459,63 @@
 <script>
 const COMPONENTS = [
   // ── MCU / Module
-  { cat:"MCU / Module",  mpn:"ESP32-S3-WROOM-1-N16R8",   desc:"ESP32-S3 Module, 16MB Flash + 8MB PSRAM",         mfr:"Espressif",        dk:"5407-ESP32-S3-WROOM-1-N16R8CT-ND",     p:6.76,  t:true  },
+  { cat:"MCU / Module",  mpn:"ESP32-S3-WROOM-1-N16R8",   desc:"ESP32-S3 Module, 16MB Flash + 8MB PSRAM",         mfr:"Espressif",        dk:"5407-ESP32-S3-WROOM-1-N16R8CT-ND",     qty:1, p:5.66,  t:true },
   // ── Integrated Circuits
-  { cat:"IC",            mpn:"MCP73832T-2ACI/OT",         desc:"LiPo Charger IC, 500mA",                          mfr:"Microchip",        dk:"MCP73832T-2ACI/OTCT-ND",               p:0.76,  t:true  },
-  { cat:"IC",            mpn:"AP2112K-3.3TRG1",           desc:"3.3V 600mA LDO Regulator",                        mfr:"Diodes Inc",       dk:"AP2112K-3.3TRG1DICT-ND",               p:0.25,  t:true  },
-  { cat:"IC",            mpn:"AP3012KTR-G1",              desc:"Boost Converter (frontlight driver)",              mfr:"Diodes Inc",       dk:"AP3012KTR-G1DICT-ND",                  p:0.29,  t:true,  opt:"fl" },
-  { cat:"IC",            mpn:"DW01A",                     desc:"1S LiPo Battery Protection IC",                   mfr:"Slkormicro",       dk:"5399-DW01ACT-ND",                      p:0.10,  t:false, opt:"bp" },
+  { cat:"IC",            mpn:"MCP73832T-2ACI/OT",         desc:"LiPo Charger IC, 500mA",                          mfr:"Microchip",        dk:"MCP73832T-2ACI/OTCT-ND",               qty:1, p:0.76,  t:true },
+  { cat:"IC",            mpn:"AP2112K-3.3TRG1",           desc:"3.3V 600mA LDO Regulator",                        mfr:"Diodes Inc",       dk:"AP2112K-3.3TRG1DICT-ND",               qty:1, p:0.25,  t:true },
+  { cat:"IC",            mpn:"AP3012KTR-G1",              desc:"Boost Converter (frontlight driver)",              mfr:"Diodes Inc",       dk:"AP3012KTR-G1DICT-ND",                  qty:1, p:0.29,  t:true },
+  { cat:"IC",            mpn:"DW01A",                     desc:"1S LiPo Battery Protection IC",                   mfr:"Slkormicro",       dk:"5399-DW01ACT-ND",                      qty:1, p:0.10,  t:false },
   // ── Transistors
-  { cat:"Transistor",    mpn:"FS8205A",                   desc:"Dual N-MOSFET (battery protection switch)",       mfr:"EVVO",             dk:"5272-FS8205ACT-ND",                    p:0.39,  t:false, opt:"bp" },
-  { cat:"Transistor",    mpn:"BSS138",                    desc:"N-ch MOSFET (I2C level shifter)",                 mfr:"onsemi",           dk:"BSS138CT-ND",                          p:0.31,  t:true  },
-  { cat:"Transistor",    mpn:"AO3419",                    desc:"P-ch MOSFET, 4A (power switch)",                  mfr:"Alpha & Omega",    dk:"785-1013-1-ND",                        p:0.49,  t:true  },
-  { cat:"Transistor",    mpn:"MMBT3904VL",                desc:"NPN Transistor (frontlight control)",             mfr:"Nexperia",         dk:"1727-MMBT3904VLCT-ND",                 p:0.11,  t:true,  opt:"fl" },
+  { cat:"Transistor",    mpn:"FS8205A",                   desc:"Dual N-MOSFET (battery protection switch)",       mfr:"EVVO",             dk:"5272-FS8205ACT-ND",                    qty:1, p:0.39,  t:false },
+  { cat:"Transistor",    mpn:"BSS138",                    desc:"N-ch MOSFET (I2C level shifter)",                 mfr:"onsemi",           dk:"BSS138CT-ND",                          qty:3, p:0.31,  t:true },
+  { cat:"Transistor",    mpn:"AO3419",                    desc:"P-ch MOSFET, 4A (power switch)",                  mfr:"Alpha & Omega",    dk:"785-1013-1-ND",                        qty:4, p:0.49,  t:true },
+  { cat:"Transistor",    mpn:"MMBT3904VL",                desc:"NPN Transistor (frontlight control)",             mfr:"Nexperia",         dk:"1727-MMBT3904VLCT-ND",                 qty:1, p:0.11,  t:true },
   // ── Diodes
-  { cat:"Diode",         mpn:"MBR0530-TP",                desc:"Schottky Diode, 0.5A 30V",                        mfr:"MCC",              dk:"MBR0530TPMSCT-ND",                     p:0.22,  t:true,  opt:"fl" },
-  { cat:"Diode",         mpn:"MBR0540-TP",                desc:"Schottky Diode, 0.5A 40V",                        mfr:"MCC",              dk:"MBR0540TPMSCT-ND",                     p:0.21,  t:true  },
-  { cat:"Diode",         mpn:"SMAJ30A",                   desc:"TVS Diode, 30V",                                  mfr:"Littelfuse",       dk:"4786-SMAJ30ACT-ND",                    p:0.24,  t:false },
+  { cat:"Diode",         mpn:"MBR0530-TP",                desc:"Schottky Diode, 0.5A 30V",                        mfr:"MCC",              dk:"MBR0530TPMSCT-ND",                     qty:6, p:0.22,  t:true },
+  { cat:"Diode",         mpn:"MBR0540-TP",                desc:"Schottky Diode, 0.5A 40V",                        mfr:"MCC",              dk:"MBR0540TPMSCT-ND",                     qty:0, p:0.21,  t:true },
+  { cat:"Diode",         mpn:"SMAJ30A",                   desc:"TVS Diode, 30V",                                  mfr:"Littelfuse",       dk:"4786-SMAJ30ACT-ND",                    qty:1, p:0.24,  t:false },
   // ── Protection
-  { cat:"Protection",    mpn:"TPD4E1U06DBVR",             desc:"USB ESD Protection Array, 4-channel",             mfr:"Texas Instruments",dk:"296-35965-1-ND",                        p:0.94,  t:true  },
-  { cat:"Protection",    mpn:"TSD05CDYFR",                desc:"TVS Diode Array, 5V clamp",                       mfr:"Texas Instruments",dk:"296-TSD05CDYFRCT-ND",                  p:0.67,  t:true  },
-  { cat:"Protection",    mpn:"PESD2IVN-UX",               desc:"ESD Protection Diode, bidirectional",             mfr:"Nexperia",         dk:"1727-2672-1-ND",                       p:0.49,  t:true  },
+  { cat:"Protection",    mpn:"TPD4E1U06DBVR",             desc:"USB ESD Protection Array, 4-channel",             mfr:"Texas Instruments",dk:"296-35965-1-ND",                        qty:4, p:0.94,  t:true },
+  { cat:"Protection",    mpn:"TSD05CDYFR",                desc:"TVS Diode Array, 5V clamp",                       mfr:"Texas Instruments",dk:"296-TSD05CDYFRCT-ND",                  qty:2, p:0.67,  t:true },
+  { cat:"Protection",    mpn:"PESD2IVN-UX",               desc:"ESD Protection Diode, bidirectional",             mfr:"Nexperia",         dk:"1727-2672-1-ND",                       qty:1, p:0.49,  t:true },
   // ── Connectors
-  { cat:"Connector",     mpn:"FH34SRJ-24S-0.5SH(99)",    desc:"FPC Connector, 24-pin 0.5mm (e-paper display)",   mfr:"Hirose",           dk:"H124725CT-ND",                         p:2.96,  t:true  },
-  { cat:"Connector",     mpn:"DM3AT-SF-PEJM5",           desc:"MicroSD Card Connector",                          mfr:"Hirose",           dk:"HR1964CT-ND",                          p:2.85,  t:true  },
-  { cat:"Connector",     mpn:"USB4085-GF-A",              desc:"USB-C 2.0 Receptacle",                            mfr:"GCT",              dk:"2073-USB4085-GF-ACT-ND",               p:0.91,  t:true  },
-  { cat:"Connector",     mpn:"PPPC062LJBN-RC",            desc:"2x3 2.54mm Debug / Programming Header",           mfr:"Sullins",          dk:"S5559-ND",                             p:1.16,  t:false },
-  { cat:"Connector",     mpn:"FH34SRJ-6S-0.5SH(50)",     desc:"FPC Connector, 6-pin 0.5mm (frontlight)",         mfr:"Hirose",           dk:"H125773CT-ND",                         p:0.88,  t:true,  opt:"fl" },
-  { cat:"Connector",     mpn:"S2B-PH-K-S",               desc:"Battery Connector, JST PH 2-pin 2mm",             mfr:"JST",              dk:"455-1719-ND",                          p:0.11,  t:false },
+  { cat:"Connector",     mpn:"FH34SRJ-24S-0.5SH(99)",    desc:"FPC Connector, 24-pin 0.5mm (e-paper display)",   mfr:"Hirose",           dk:"H124725CT-ND",                         qty:1, p:2.26,  t:true },
+  { cat:"Connector",     mpn:"DM3AT-SF-PEJM5",           desc:"MicroSD Card Connector",                          mfr:"Hirose",           dk:"HR1964CT-ND",                          qty:1, p:2.86,  t:true },
+  { cat:"Connector",     mpn:"USB4085-GF-A",              desc:"USB-C 2.0 Receptacle",                            mfr:"GCT",              dk:"2073-USB4085-GF-ACT-ND",               qty:1, p:0.91,  t:true },
+  { cat:"Connector",     mpn:"PPPC062LJBN-RC",            desc:"2x3 2.54mm Debug / Programming Header",           mfr:"Sullins",          dk:"S5559-ND",                             qty:1, p:1.16,  t:false },
+  { cat:"Connector",     mpn:"FH34SRJ-6S-0.5SH(50)",     desc:"FPC Connector, 6-pin 0.5mm (frontlight)",         mfr:"Hirose",           dk:"H125773CT-ND",                         qty:1, p:0.79,  t:true },
+  { cat:"Connector",     mpn:"S2B-PH-K-S",               desc:"Battery Connector, JST PH 2-pin 2mm",             mfr:"JST",              dk:"455-1719-ND",                          qty:1, p:0.11,  t:false },
   // ── Mechanical
-  { cat:"Mechanical",    mpn:"MJTP1117",                  desc:"Tactile Switch, SMD (Reset / Boot)",              mfr:"C&K",              dk:"679-2400-ND",                          p:0.65,  t:false },
+  { cat:"Mechanical",    mpn:"MJTP1117",                  desc:"Tactile Switch, SMD (Reset / Boot)",              mfr:"C&K",              dk:"679-2400-ND",                          qty:10, p:0.53,  t:false },
   // ── Inductor
-  { cat:"Inductor",      mpn:"NR3015T220M",               desc:"Power Inductor, 22uH 3A",                         mfr:"Taiyo Yuden",      dk:"587-1651-1-ND",                        p:0.26,  t:true,  opt:"fl" },
+  { cat:"Inductor",      mpn:"NR3015T220M",               desc:"Power Inductor, 22uH 3A",                         mfr:"Taiyo Yuden",      dk:"587-1651-1-ND",                        qty:2, p:0.26,  t:true },
   // ── Capacitors
-  { cat:"Capacitor",     mpn:"CL21A226KQCLRNC",           desc:"Cap 22uF 10V X5R 0805",                           mfr:"Samsung",          dk:"1276-6687-1-ND",                       p:0.14,  t:true  },
-  { cat:"Capacitor",     mpn:"GRM21BR61H475KE51L",        desc:"Cap 4.7uF 50V X5R 0805",                          mfr:"Murata",           dk:"490-10751-1-ND",                       p:0.19,  t:true  },
-  { cat:"Capacitor",     mpn:"GMC21X5R105K50NT",          desc:"Cap 1uF 50V X5R 0805",                            mfr:"Murata",           dk:"4713-GMC21X5R105K50NTCT-ND",           p:0.10,  t:false },
-  { cat:"Capacitor",     mpn:"C0805C104K5RAC7210",        desc:"Cap 100nF 50V X7R 0805",                          mfr:"KEMET",            dk:"399-C0805C104K5RAC7210CT-ND",          p:0.13,  t:true  },
-  { cat:"Capacitor",     mpn:"C0805C102J5GACTU",          desc:"Cap 1nF 50V C0G 0805",                            mfr:"KEMET",            dk:"399-C0805C102J5GACTUCT-ND",            p:0.12,  t:false },
+  { cat:"Capacitor",     mpn:"CL21A226KQCLRNC",           desc:"Cap 22uF 10V X5R 0805",                           mfr:"Samsung",          dk:"1276-6687-1-ND",                       qty:3, p:0.14,  t:true },
+  { cat:"Capacitor",     mpn:"GRM21BR61H475KE51L",        desc:"Cap 4.7uF 50V X5R 0805",                          mfr:"Murata",           dk:"490-10751-1-ND",                       qty:12, p:0.19,  t:true },
+  { cat:"Capacitor",     mpn:"GMC21X5R105K50NT",          desc:"Cap 1uF 50V X5R 0805",                            mfr:"Murata",           dk:"4713-GMC21X5R105K50NTCT-ND",           qty:6, p:0.10,  t:false },
+  { cat:"Capacitor",     mpn:"C0805C104K5RAC7210",        desc:"Cap 100nF 50V X7R 0805",                          mfr:"KEMET",            dk:"399-C0805C104K5RAC7210CT-ND",          qty:3, p:0.13,  t:true },
+  { cat:"Capacitor",     mpn:"C0805C102J5GACTU",          desc:"Cap 1nF 50V C0G 0805",                            mfr:"KEMET",            dk:"399-C0805C102J5GACTUCT-ND",            qty:1, p:0.10,  t:false },
   // ── Resistors
-  { cat:"Resistor",      mpn:"CRG0805ZR",                 desc:"Res 0 Ohm 0805 (jumper)",                         mfr:"TE Connectivity",  dk:"A106066CT-ND",                         p:0.10,  t:false },
-  { cat:"Resistor",      mpn:"CR0805-J/-3R0ELF",          desc:"Res 3 Ohm 0805",                                  mfr:"Vishay",           dk:"118-CR0805-J/-3R0ELFCT-ND",            p:0.10,  t:false },
-  { cat:"Resistor",      mpn:"RMCF0805JT33R0",            desc:"Res 33 Ohm 0805",                                 mfr:"Stackpole",        dk:"RMCF0805JT33R0CT-ND",                  p:0.10,  t:true  },
-  { cat:"Resistor",      mpn:"RC0805FR-1382RL",           desc:"Res 82 Ohm 0805",                                 mfr:"Yageo",            dk:"13-RC0805FR-1382RLCT-ND",              p:0.10,  t:false },
-  { cat:"Resistor",      mpn:"RR1220P-102-D",             desc:"Res 1k Ohm 0805, precision",                      mfr:"Susumu",           dk:"RR12P1.0KDCT-ND",                      p:0.10,  t:true  },
-  { cat:"Resistor",      mpn:"RC0805JR-071ML",            desc:"Res 1 mOhm 0805 (current sense shunt)",           mfr:"Yageo",            dk:"311-1.0MARCT-ND",                      p:0.10,  t:true  },
-  { cat:"Resistor",      mpn:"RMCF0805JT5K10",            desc:"Res 5.1k Ohm 0805",                               mfr:"Stackpole",        dk:"RMCF0805JT5K10CT-ND",                  p:0.10,  t:true  },
-  { cat:"Resistor",      mpn:"CRGCQ0805F5K6",             desc:"Res 5.6k Ohm 0805",                               mfr:"TE Connectivity",  dk:"A129758CT-ND",                         p:0.10,  t:false },
-  { cat:"Resistor",      mpn:"RR1220P-103-D",             desc:"Res 10k Ohm 0805, precision",                     mfr:"Susumu",           dk:"RR12P10.0KDCT-ND",                     p:0.10,  t:true  },
-  { cat:"Resistor",      mpn:"RMCF0805JT12K0",            desc:"Res 12k Ohm 0805",                                mfr:"Stackpole",        dk:"738-RMCF0805JT12K0CT-ND",              p:0.10,  t:false },
-  { cat:"Resistor",      mpn:"CRG0805F20K",               desc:"Res 20k Ohm 0805",                                mfr:"TE Connectivity",  dk:"A126349CT-ND",                         p:0.10,  t:false },
-  { cat:"Resistor",      mpn:"CRGCQ0805F33K",             desc:"Res 33k Ohm 0805",                                mfr:"TE Connectivity",  dk:"A129767CT-ND",                         p:0.10,  t:false },
-  { cat:"Resistor",      mpn:"RK73B2ATTD563J",            desc:"Res 56k Ohm 0805",                                mfr:"KOA",              dk:"2019-RK73B2ATTD563JCT-ND",             p:0.10,  t:true  },
-  { cat:"Resistor",      mpn:"RC0805FR-1368KL",           desc:"Res 68k Ohm 0805",                                mfr:"Yageo",            dk:"13-RC0805FR-1368KLCT-ND",              p:0.10,  t:false },
-  { cat:"Resistor",      mpn:"RC0805JR-07100KL",          desc:"Res 100k Ohm 0805",                               mfr:"Yageo",            dk:"311-100KARCT-ND",                      p:0.10,  t:true  },
+  { cat:"Resistor",      mpn:"CRG0805ZR",                 desc:"Res 0 Ohm 0805 (jumper)",                         mfr:"TE Connectivity",  dk:"A106066CT-ND",                         qty:1, p:0.10,  t:false },
+  { cat:"Resistor",      mpn:"CR0805-J/-3R0ELF",          desc:"Res 3 Ohm 0805",                                  mfr:"Vishay",           dk:"118-CR0805-J/-3R0ELFCT-ND",            qty:1, p:0.10,  t:false },
+  { cat:"Resistor",      mpn:"RMCF0805JT33R0",            desc:"Res 33 Ohm 0805",                                 mfr:"Stackpole",        dk:"RMCF0805JT33R0CT-ND",                  qty:12, p:0.10,  t:true },
+  { cat:"Resistor",      mpn:"RC0805FR-1382RL",           desc:"Res 82 Ohm 0805",                                 mfr:"Yageo",            dk:"13-RC0805FR-1382RLCT-ND",              qty:1, p:0.10,  t:false },
+  { cat:"Resistor",      mpn:"RR1220P-102-D",             desc:"Res 1k Ohm 0805, precision",                      mfr:"Susumu",           dk:"RR12P1.0KDCT-ND",                      qty:1, p:0.10,  t:true },
+  { cat:"Resistor",      mpn:"RC0805JR-071ML",            desc:"Res 1 mOhm 0805 (current sense shunt)",           mfr:"Yageo",            dk:"311-1.0MARCT-ND",                      qty:3, p:0.10,  t:true },
+  { cat:"Resistor",      mpn:"RMCF0805JT5K10",            desc:"Res 5.1k Ohm 0805",                               mfr:"Stackpole",        dk:"RMCF0805JT5K10CT-ND",                  qty:2, p:0.10,  t:true },
+  { cat:"Resistor",      mpn:"CRGCQ0805F5K6",             desc:"Res 5.6k Ohm 0805",                               mfr:"TE Connectivity",  dk:"A129758CT-ND",                         qty:1, p:0.11,  t:false },
+  { cat:"Resistor",      mpn:"RR1220P-103-D",             desc:"Res 10k Ohm 0805, precision",                     mfr:"Susumu",           dk:"RR12P10.0KDCT-ND",                     qty:16, p:0.10,  t:true },
+  { cat:"Resistor",      mpn:"RMCF0805JT12K0",            desc:"Res 12k Ohm 0805",                                mfr:"Stackpole",        dk:"738-RMCF0805JT12K0CT-ND",              qty:1, p:0.10,  t:false },
+  { cat:"Resistor",      mpn:"CRG0805F20K",               desc:"Res 20k Ohm 0805",                                mfr:"TE Connectivity",  dk:"A126349CT-ND",                         qty:1, p:0.10,  t:false },
+  { cat:"Resistor",      mpn:"CRGCQ0805F33K",             desc:"Res 33k Ohm 0805",                                mfr:"TE Connectivity",  dk:"A129767CT-ND",                         qty:1, p:0.10,  t:false },
+  { cat:"Resistor",      mpn:"RK73B2ATTD563J",            desc:"Res 56k Ohm 0805",                                mfr:"KOA",              dk:"2019-RK73B2ATTD563JCT-ND",             qty:1, p:0.10,  t:true },
+  { cat:"Resistor",      mpn:"RC0805FR-1368KL",           desc:"Res 68k Ohm 0805",                                mfr:"Yageo",            dk:"13-RC0805FR-1368KLCT-ND",              qty:1, p:0.54,  t:false },
 ];
 
 const FIXED = [
-  { label:"Good Display e-paper screen — GDEQ0426T82-FL01C (4.26\", frontlit, recommended)", note:"sourced from Good Display; non-frontlit version available for further savings if skipping frontlight circuitry", p:25.00 },
-  { label:"LiPo battery, 3.7V (capacity TBD)", note:"estimate — varies by supplier and capacity", p:10.00 },
-  { label:"PCB fabrication, 5-piece run (per unit)", note:"estimate based on 5-piece quotes from services such as JLCPCB, PCBWay, and Elecrow", p:5.00 },
-  { label:"PCBA assembly labor (per unit)", note:"flat estimate of $5/board based on personal quoting experience with the above services at 5-piece quantity; actual cost varies by service, stencil fee, and component count", p:5.00 },
+  { label:"Good Display e-paper screen — GDEQ0426T82-FL01C (4.26\", frontlit, recommended)", note:"sourced from Good Display; non-frontlit version available for further savings if skipping frontlight circuit", p:29.59 },
+  { label:"LiPo battery, 3.7V (capacity TBD)", note:"estimate — varies by supplier and capacity", p:10.06 },
+  { label:"PCB fabrication, 5-piece run (per unit)", note:"estimate based on 5-piece quotes from services such as JLCPCB, PCBWay, and Elecrow", p:24.14 },
   { label:"3D print filament — case + brackets", note:"PLA estimate based on model geometry", p:3.00 },
 ];
 
@@ -552,7 +550,7 @@ function $ (n) { return '$' + n.toFixed(2); }
 // Row 1: title
 mkRow('r-title', [{ html:'de-link pip &mdash; Bill of Materials', span:9, cls:'bold' }]);
 // Row 2: subtitle
-mkRow('r-sub', [{ html:'Digikey cut-tape pricing, qty 1 per component &bull; prices cached June&nbsp;2026 &bull; excludes: shipping, handling, tariffs, PCBA assembly labor', span:9 }]);
+mkRow('r-sub', [{ html:'Digikey cut-tape pricing, qty 1 per component &bull; prices cached June&nbsp;2026 &bull; excludes: shipping, handling, tariffs', span:9 }]);
 // Row 3: blank
 mkRow('r-blank', [{ text:'', span:9 }]);
 
@@ -588,19 +586,18 @@ COMPONENTS.forEach((c, idx) => {
     ]);
   }
   num++;
-  total1 += c.p;
-  total5 += c.p * 5;
-  const rowClass = c.opt === 'fl' ? 'r-fl' : c.opt === 'bp' ? 'r-bp' : (num % 2 === 1) ? 'r-odd' : 'r-even';
-  const optBadge = c.opt === 'fl' ? '<span class="opt-fl">&#9654; FL</span>' : c.opt === 'bp' ? '<span class="opt-bp">&#9654; BP</span>' : '';
+  total1 += c.p * c.qty;
+  total5 += c.p * c.qty * 5;
+  const rowClass = (num % 2 === 1) ? 'r-odd' : 'r-even';
   mkRow(rowClass, [
     { text:num,    cls:'ct' },
     { text:c.mpn,  cls:'mono' },
-    { html: c.desc + optBadge },
+    { html: c.desc },
     { text:c.mfr },
     { text:c.dk,   cls:'mono blue' },
-    { text:1,      cls:'ct' },
+    { text:c.qty,  cls:'ct' },
     { text:$(c.p), cls:'r' },
-    { text:$(c.p*5), cls:'r' },
+    { text:$(c.p * c.qty * 5), cls:'r' },
     { html: c.t ? '<span class="tariff-flag">&#8224;</span>' : '', cls:'ct' },
   ]);
 });
@@ -659,28 +656,24 @@ mkRow('r-blank', [{ text:'', span:9 }]);
 mkRow('r-note', [
   { html:'<b>Row legend:</b>&nbsp;&nbsp;'
       + '<span class="legend-box">'
-      + '<span><span class="legend-swatch" style="background:#fff4e0;"></span> <span class="opt-fl" style="margin-left:0;">&#9654; FL</span> &mdash; frontlight circuit (optional, ~$5 in components). Skip if using a non-frontlit screen variant.</span>'
+      + '<span><span class="legend-swatch" style="background:#fff4e0;"></span> <span class="opt-fl" style="margin-left:0;">&#9654; FL</span> &mdash; frontlight circuit (optional, ~$5 in components)</span>'
       + '&nbsp;&nbsp;&nbsp;'
-      + '<span><span class="legend-swatch" style="background:#eef8ee;"></span> <span class="opt-bp" style="margin-left:0;">&#9654; BP</span> &mdash; battery protection (optional, ~$1 in components). Omit only if your battery already includes built-in protection.</span>'
+      + '<span><span class="legend-swatch" style="background:#eef8ee;"></span> <span class="opt-bp" style="margin-left:0;">&#9654; BP</span> &mdash; battery protection (optional, ~$1 in components)</span>'
       + '</span>',
     span:9 }
 ]);
 
 // Notes
 mkRow('r-note', [
-  { html:'<b>x5 quantity column:</b> ordering 5x each component totals <b>' + $(total5) + '</b>, reflecting the minimum batch most PCBA assembly services require. At this quantity, Digikey unit prices are identical to 1-piece pricing for nearly all parts on this BOM. A professional PCBA house sources at far lower cost through their own supply chain &mdash; what you see here is a realistic ceiling for a DIY or first-prototype run.',
+  { html:'<b>x5 quantity column:</b> ordering 5x each component totals <b>' + $(total5) + '</b>, reflecting the minimum batch most PCBA assembly services require. At this quantity, Digikey unit pricing typically drops by 10-50% per part.',
     span:9 }
 ]);
 mkRow('r-note', [
-  { html:'<b>Recommended screen:</b> <b>GDEQ0426T82-FL01C</b> (Good Display, 4.26", 800x480, with frontlight). If you are omitting the frontlight circuit, a non-frontlit variant of the same panel is available at lower cost &mdash; in that case also drop the <span class="opt-fl" style="margin-left:0">&#9654; FL</span>-marked components above.',
-    span:9 }
-]);
-mkRow('r-note', [
-  { html:'<b>PCBA assembly estimate:</b> the $5/board labor figure is a flat estimate based on personal quoting experience with services such as JLCPCB, PCBWay, and Elecrow at 5-piece quantities. I am not currently affiliated with or recommending any specific service. Gerbers, CPL, and final BOM files will be released first to <a href="https://www.patreon.com/iandchasse" target="_blank" style="color:#000080;">Patreon</a> and <a href="https://ko-fi.com/iandchasse" target="_blank" style="color:#000080;">Ko-fi</a> contributors as a thank-you for their support, then published publicly to the <a href="https://github.com/iandchasse/de-link" target="_blank" style="color:#000080;">de-link GitHub repository</a> once the PCB design is finalized.',
+  { html:'<b>Recommended screen:</b> <b>GDEQ0426T82-FL01C</b> (Good Display, 4.26", 800x480, with frontlight). If you are omitting the frontlight circuit, a non-frontlit variant of the same panel is available at reduced cost.',
     span:9 }
 ]);
 mkRow('r-tariff', [
-  { html:'<span class="tariff-flag">&#8224;</span> This part currently has an active US import tariff flag in Digikey\'s system. Prices shown are base pricing without tariff surcharges &mdash; your actual checkout total may be higher depending on tariff status at time of purchase.',
+  { html:'<span class="tariff-flag">&#8224;</span> This part currently has an active US import tariff flag in Digikey\'s system. Prices shown are base pricing without tariff surcharges &mdash; you may see additional charges at checkout.',
     span:9 }
 ]);
 
