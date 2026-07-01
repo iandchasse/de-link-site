@@ -215,6 +215,15 @@
       border-bottom-color: #ffffff;
       border-right-color: #ffffff;
     }
+    @media (max-width: 480px) {
+      #learn-more {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+      }
+      #learn-more a { margin-left: 0 !important; width: 100%; max-width: 260px; }
+    }
 
     /* ---- newsletter ---- */
     #newsletter { margin: 0 auto; }
@@ -299,6 +308,19 @@
       letter-spacing: 0.2px;
       margin-top: 4px;
       opacity: 0.85;
+    }
+    @media (max-width: 480px) {
+      #retro-buttons {
+        grid-template-columns: 1fr;
+        justify-items: center;
+      }
+      .rlink {
+        width: 100%;
+        max-width: 320px;
+        justify-content: center;
+        text-align: center;
+      }
+      .rlink-text { text-align: center; }
     }
     @keyframes fl-patreon {
       0%,49%   { background:#F96854; color:#fff; border-color:#c94535; }
