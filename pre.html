@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/svg+xml" href="logos/simple-logo-white.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700;900&display=swap" rel="stylesheet">
+  <title>de-link pre — prototype 0</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #1c1c1c;
+      font-family: "Courier New", Courier, monospace;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px 10px 40px;
+    }
+
+    /* ── App Window ── */
+    .app-window {
+      width: 100%;
+      max-width: 920px;
+      background: #c0c0c0;
+      border: 2px solid;
+      border-top-color: #ffffff;
+      border-left-color: #ffffff;
+      border-bottom-color: #808080;
+      border-right-color: #808080;
+      box-shadow: 3px 3px 0 #000000;
+    }
+
+    /* ── Title Bar ── */
+    .win-titlebar {
+      background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+      height: 22px;
+      display: flex;
+      align-items: center;
+      padding: 0 3px 0 6px;
+      gap: 5px;
+      user-select: none;
+    }
+    .win-titlebar-text {
+      flex: 1;
+      color: #fff;
+      font-size: 12px;
+      font-weight: bold;
+      letter-spacing: 0.3px;
+    }
+    .win-titlebar-btns { display: flex; gap: 2px; }
+    .win-tb-btn {
+      width: 16px; height: 14px;
+      background: #c0c0c0;
+      border: 1px solid;
+      border-top-color: #fff;
+      border-left-color: #fff;
+      border-bottom-color: #808080;
+      border-right-color: #808080;
+      font-size: 9px; font-weight: bold;
+      display: flex; align-items: center; justify-content: center;
+      cursor: default; color: #000;
+    }
+
+    /* ── Menu Bar ── */
+    .win-menubar {
+      background: #c0c0c0;
+      border-bottom: 1px solid #808080;
+      padding: 2px 4px;
+      display: flex;
+    }
+    .win-menu-item {
+      font-size: 13px;
+      padding: 2px 10px;
+      cursor: default; color: #000;
+    }
+    .win-menu-item:hover { background: #000080; color: #fff; }
+
+    /* ── Window Body ── */
+    .win-body {
+      background: #c0c0c0;
+      padding: 14px 16px 20px;
+    }
+
+    /* ── Logo Header ── */
+    .logo-area {
+      text-align: center;
+      padding: 22px 0 16px;
+      border-bottom: 2px solid #808080;
+      margin-bottom: 16px;
+    }
+    /* SVG wordmark + small edition label as subscript beside it */
+    .logo-block {
+      display: inline-flex;
+      flex-direction: row;
+      align-items: flex-end;
+      gap: 10px;
+    }
+    .logo-block img.wordmark {
+      height: clamp(70px, 14vw, 120px);
+      max-width: 80vw;
+      display: block;
+    }
+    .logo-edition {
+      font-family: 'Roboto', sans-serif;
+      font-weight: 700;
+      font-size: 18px;
+      padding-bottom: 4px;
+      line-height: 1;
+    }
+    .edition-pre { color: #c05020; }
+    .logo-eyebrow {
+      font-size: 13px;
+      color: #555;
+      margin-top: 10px;
+      letter-spacing: 1px;
+    }
+
+    /* ── Group Box ── */
+    .group-box {
+      border: 1px solid;
+      border-top-color: #808080;
+      border-left-color: #808080;
+      border-bottom-color: #fff;
+      border-right-color: #fff;
+      margin: 16px 0;
+      padding: 20px 16px 16px;
+      position: relative;
+    }
+    .group-label {
+      position: absolute;
+      top: -10px; left: 12px;
+      background: #c0c0c0;
+      padding: 0 6px;
+      font-size: 13px;
+      font-weight: bold;
+      color: #000;
+      white-space: nowrap;
+    }
+    .group-box p {
+      font-size: 15px;
+      line-height: 1.85;
+      color: #111;
+    }
+    .group-box p + p { margin-top: 14px; }
+
+    /* ── Top Section: Viewer + Intro ── */
+    .top-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      align-items: start;
+    }
+    @media (max-width: 620px) {
+      .top-section { grid-template-columns: 1fr; }
+    }
+
+    /* ── Viewer (sunken) ── */
+    .viewer-frame {
+      border: 2px solid;
+      border-top-color: #808080;
+      border-left-color: #808080;
+      border-bottom-color: #fff;
+      border-right-color: #fff;
+      background: #1d3557;
+      aspect-ratio: 1 / 1;
+      position: relative;
+      overflow: hidden;
+    }
+    .viewer-frame iframe {
+      width: 100%; height: 100%;
+      border: none; display: block;
+    }
+    .viewer-label {
+      position: absolute;
+      top: 6px; left: 8px;
+      font-size: 9px;
+      letter-spacing: 1px;
+      color: rgba(170,200,220,0.55);
+      text-transform: uppercase;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    /* ── Intro text blocks ── */
+    .intro-blocks { display: flex; flex-direction: column; gap: 16px; }
+    .intro-block h3 {
+      font-size: 12px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #000080;
+      margin-bottom: 6px;
+    }
+    .intro-block p {
+      font-size: 14px;
+      line-height: 1.8;
+      color: #111;
+    }
+    .intro-block a { color: #000080; text-decoration: underline; }
+
+    /* ── Photo Gallery Strip ── */
+    .photo-strip {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 4px 2px 8px;
+      scrollbar-width: thin;
+      scrollbar-color: #808080 #d4d0c8;
+    }
+    .photo-strip::-webkit-scrollbar { height: 8px; }
+    .photo-strip::-webkit-scrollbar-track { background: #d4d0c8; }
+    .photo-strip::-webkit-scrollbar-thumb {
+      background: #808080;
+      border: 1px solid;
+      border-top-color: #fff; border-left-color: #fff;
+      border-bottom-color: #555; border-right-color: #555;
+    }
+    .photo-cell {
+      flex: 0 0 auto;
+      border: 2px solid;
+      border-top-color: #808080; border-left-color: #808080;
+      border-bottom-color: #fff; border-right-color: #fff;
+      background: #111;
+      overflow: hidden;
+      width: 200px; height: 220px;
+      cursor: pointer;
+    }
+    .photo-cell:hover {
+      border-top-color: #fff; border-left-color: #fff;
+      border-bottom-color: #808080; border-right-color: #808080;
+    }
+    .photo-cell img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: opacity 0.15s;
+    }
+    .photo-cell:hover img { opacity: 0.85; }
+    @media (max-width: 540px) {
+      .photo-cell { width: 160px; height: 178px; }
+    }
+
+    /* ── Feature Table ── */
+    .feat-dl { margin: 14px 0 0; border-top: 1px solid #808080; }
+    .feat-row {
+      display: grid;
+      grid-template-columns: 170px 1fr;
+      border-bottom: 1px solid #808080;
+    }
+    @media (max-width: 500px) {
+      .feat-row { grid-template-columns: 1fr; }
+    }
+    .feat-key {
+      background: #d4d0c8;
+      padding: 9px 12px;
+      font-size: 13px;
+      font-weight: bold; color: #111;
+      border-right: 1px solid #808080;
+    }
+    .feat-val {
+      padding: 9px 14px;
+      font-size: 14px;
+      color: #111; line-height: 1.6;
+    }
+
+    /* ── Raised Panel ── */
+    .raised-panel {
+      border: 2px solid;
+      border-top-color: #fff;
+      border-left-color: #fff;
+      border-bottom-color: #808080;
+      border-right-color: #808080;
+      background: #d4d0c8;
+      padding: 22px 24px;
+      text-align: center;
+      margin: 16px 0;
+    }
+    .raised-panel h2 {
+      font-size: 20px; color: #000;
+      margin-bottom: 12px; letter-spacing: 1px;
+    }
+    .raised-panel p {
+      font-size: 15px; color: #333;
+      line-height: 1.8; max-width: 600px;
+      margin: 0 auto 16px;
+    }
+
+    /* ── Buttons ── */
+    .btn-row {
+      display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;
+      margin: 10px 0;
+    }
+    .win98-btn {
+      font-family: "Courier New", monospace;
+      font-size: 13px;
+      background: #c0c0c0; color: #111;
+      border: 2px solid;
+      border-top-color: #fff; border-left-color: #fff;
+      border-bottom-color: #808080; border-right-color: #808080;
+      padding: 5px 18px;
+      text-decoration: none;
+      display: inline-block;
+      cursor: pointer;
+    }
+    .win98-btn:hover { background: #d8d8d8; }
+    .win98-btn:active {
+      border-top-color: #808080; border-left-color: #808080;
+      border-bottom-color: #fff; border-right-color: #fff;
+    }
+    .win98-btn.accent {
+      background: #000080; color: #fff;
+      border-top-color: #4444cc; border-left-color: #4444cc;
+      border-bottom-color: #000040; border-right-color: #000040;
+    }
+    .win98-btn.accent:hover { background: #0000a8; }
+    .btn-patreon { color: #F96854; border-color: #a83020; }
+    .btn-kofi    { color: #FF5E5B; border-color: #aa2a28; }
+    .btn-discord { color: #7983f5; border-color: #3a46c4; }
+
+    /* ── Status Bar ── */
+    .win-statusbar {
+      background: #c0c0c0;
+      border-top: 2px solid #808080;
+      display: flex; gap: 3px; padding: 3px 5px;
+    }
+    .status-pane {
+      border: 1px solid;
+      border-top-color: #808080; border-left-color: #808080;
+      border-bottom-color: #fff; border-right-color: #fff;
+      padding: 2px 8px; font-size: 11px; color: #000;
+    }
+    .status-pane.grow { flex: 1; }
+
+    /* ══════════════════════════════════════════════
+       WIN98 PHOTO LIGHTBOX
+       ══════════════════════════════════════════════ */
+    #lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+    #lightbox.open { display: flex; }
+    #lb-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.78);
+      cursor: pointer;
+    }
+    #lb-window {
+      position: relative;
+      z-index: 1;
+      width: min(92vw, 720px);
+      background: #c0c0c0;
+      border: 2px solid;
+      border-top-color: #fff;
+      border-left-color: #fff;
+      border-bottom-color: #808080;
+      border-right-color: #808080;
+      box-shadow: 3px 3px 0 #000;
+      display: flex;
+      flex-direction: column;
+    }
+    #lb-titlebar {
+      background: linear-gradient(90deg, #000080, #1084d0);
+      height: 22px;
+      display: flex;
+      align-items: center;
+      padding: 0 3px 0 6px;
+      gap: 5px;
+      flex-shrink: 0;
+      user-select: none;
+    }
+    #lb-title {
+      flex: 1;
+      color: #fff;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    #lb-close-btn {
+      width: 16px; height: 14px;
+      background: #c0c0c0;
+      border: 1px solid;
+      border-top-color: #fff;
+      border-left-color: #fff;
+      border-bottom-color: #808080;
+      border-right-color: #808080;
+      font-size: 9px; font-weight: bold;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: #000;
+    }
+    #lb-close-btn:active {
+      border-top-color: #808080; border-left-color: #808080;
+      border-bottom-color: #fff; border-right-color: #fff;
+    }
+    #lb-img-wrap {
+      background: #111;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px;
+      min-height: 200px;
+    }
+    #lb-img {
+      max-width: 100%;
+      max-height: calc(90vh - 100px);
+      display: block;
+      object-fit: contain;
+    }
+    #lb-footer {
+      background: #c0c0c0;
+      border-top: 1px solid #808080;
+      padding: 6px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    #lb-counter {
+      font-size: 12px;
+      color: #111;
+      font-family: "Courier New", monospace;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ══ Win98 Photo Lightbox ══ -->
+  <div id="lightbox">
+    <div id="lb-overlay"></div>
+    <div id="lb-window">
+      <div id="lb-titlebar">
+        <span id="lb-title">de-link pre</span>
+        <div>
+          <span id="lb-close-btn">✕</span>
+        </div>
+      </div>
+      <div id="lb-img-wrap">
+        <img id="lb-img" src="" alt="">
+      </div>
+      <div id="lb-footer">
+        <button class="win98-btn" id="lb-prev">[ &lt; prev ]</button>
+        <span id="lb-counter">1 / 6</span>
+        <button class="win98-btn" id="lb-next">[ next &gt; ]</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="app-window">
+
+    <div class="win-titlebar">
+      <span class="win-titlebar-text">de-link.exe &mdash; pre prototype</span>
+      <div class="win-titlebar-btns">
+        <span class="win-tb-btn">_</span>
+        <span class="win-tb-btn">□</span>
+        <span class="win-tb-btn">✕</span>
+      </div>
+    </div>
+
+    <div class="win-menubar">
+      <span class="win-menu-item">File</span>
+      <span class="win-menu-item">View</span>
+      <span class="win-menu-item">Help</span>
+    </div>
+
+    <div class="win-body">
+
+      <div class="logo-area">
+        <div class="logo-block">
+          <img src="logos/full-logo-transparent.svg" alt="de-link" class="wordmark">
+          <span class="logo-edition edition-pre">pre</span>
+        </div>
+        <p class="logo-eyebrow">prototype 0 &mdash; not the end goal</p>
+      </div>
+
+      <!-- Viewer + intro -->
+      <div class="group-box">
+        <span class="group-label">Interactive Model &mdash; drag to rotate</span>
+        <div class="top-section">
+
+          <div class="viewer-frame">
+            <div class="viewer-label">drag to rotate &middot; click assemble</div>
+            <iframe
+              src="viewer.html?embed&model=delink-pre.glb&config=delink-pre-explosion.json"
+              title="de-link pre 3D model"
+              allow="accelerometer"
+              loading="lazy">
+            </iframe>
+          </div>
+
+          <div class="intro-blocks">
+            <div class="intro-block">
+              <h3>what is it</h3>
+              <p>
+                the de-link pre is prototype 0 of the de-link platform. not a product.
+                not the goal. it proved that an open, hand-solderable, 3D-printable
+                e-paper reader could actually work. now development moves toward v1.0: pip.
+              </p>
+            </div>
+            <div class="intro-block">
+              <h3>easy to build, easier to repair</h3>
+              <p>
+                0805 and SOT-23 components throughout. hand-solderable with basic equipment.
+                the enclosure is fully 3D-printable. when something breaks, you replace the part.
+                want a different screen? get a new panel and print a new case.
+              </p>
+            </div>
+            <div class="intro-block">
+              <h3>software freedom</h3>
+              <p>
+                flash <a href="https://crosspointreader.com" target="_blank">crosspoint reader</a>
+                over USB-C and you have a working e-reader in minutes. no locked bootloader.
+                no bricks. write your own firmware if you want.
+              </p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Photo gallery -->
+      <div class="group-box">
+        <span class="group-label">Photos &mdash; click to open</span>
+        <div class="photo-strip" id="photo-strip">
+          <div class="photo-cell" data-idx="0"><img src="img/crisp.jpg" alt="de-link pre display" loading="lazy"></div>
+          <div class="photo-cell" data-idx="1"><img src="img/dune.jpg" alt="de-link pre reading" loading="lazy"></div>
+          <div class="photo-cell" data-idx="2"><img src="img/frontlight.jpg" alt="de-link pre frontlight on" loading="lazy"></div>
+          <div class="photo-cell" data-idx="3"><img src="img/redgreen.jpg" alt="de-link pre display test" loading="lazy"></div>
+          <div class="photo-cell" data-idx="4"><img src="img/lowio2.jpg" alt="de-link pre hardware" loading="lazy"></div>
+          <div class="photo-cell" data-idx="5"><img src="img/frontlight2.png" alt="de-link pre frontlight" loading="lazy"></div>
+        </div>
+      </div>
+
+      <!-- Hardware features -->
+      <div class="group-box">
+        <span class="group-label">Hardware Features</span>
+        <div class="feat-dl">
+          <div class="feat-row">
+            <div class="feat-key">processor</div>
+            <div class="feat-val">dual-core ESP32-S3 at 240 MHz. headroom to run display refresh and background tasks simultaneously.</div>
+          </div>
+          <div class="feat-row">
+            <div class="feat-key">storage</div>
+            <div class="feat-val">4-bit SDMMC for fast microSD reads. epub page streaming is noticeably quicker than with single-bit SPI.</div>
+          </div>
+          <div class="feat-row">
+            <div class="feat-key">frontlight</div>
+            <div class="feat-val">hardware series LED driver on-board. software-controlled cool/warm temperature. no external accessory needed.</div>
+          </div>
+          <div class="feat-row">
+            <div class="feat-key">input</div>
+            <div class="feat-val">two independent 4-switch resistor ladders plus a multi-function GPIO and reset.</div>
+          </div>
+          <div class="feat-row">
+            <div class="feat-key">USB-C + OTG</div>
+            <div class="feat-val">USB OTG supports file transfer over USB-C without removing the SD card. works as a USB device, not just a charger port.</div>
+          </div>
+          <div class="feat-row">
+            <div class="feat-key">battery</div>
+            <div class="feat-val">optional onboard overcharge/discharge protection. accepts almost any single-cell 3.7V LiPo with a JST 2.0 connector.</div>
+          </div>
+          <div class="feat-row">
+            <div class="feat-key">screen</div>
+            <div class="feat-val">any 24-pin GoodDisplay SPI e-paper panel. 3.97", 4.26", 7.5", and more. swap the screen without touching the PCB.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Caveats -->
+      <div class="group-box">
+        <span class="group-label">What the pre gets wrong</span>
+        <p>
+          this is a first prototype. it does everything it is supposed to do and i use mine every day.
+          but the shape is a compromise, the enclosure is bulkier than it needs to be, and the
+          per-unit build cost is higher than i want it to be long-term.
+        </p>
+        <p>
+          the PCB layout has room to shrink. the case has room to get thinner. the BOM has room to
+          get cheaper. the pre proves the idea works. pip is where it becomes something
+          worth recommending to someone else.
+        </p>
+      </div>
+
+      <!-- Pip teaser / redirect -->
+      <div class="raised-panel">
+        <h2>what comes next</h2>
+        <p>
+          pip is v1.0. PCB design is nearly final. build guides, sourcing tutorials,
+          and community software are coming. learn more about where the platform is headed.
+        </p>
+        <div class="btn-row">
+          <a href="about.html" class="win98-btn accent">[ de-link pip &rarr; ]</a>
+        </div>
+      </div>
+
+      <div class="btn-row" style="margin-top:16px">
+        <a href="https://github.com/iandchasse/de-link" target="_blank" class="win98-btn">[ github ]</a>
+        <a href="https://www.patreon.com/iandchasse" target="_blank" class="win98-btn btn-patreon">[ patreon ]</a>
+        <a href="https://ko-fi.com/iandchasse" target="_blank" class="win98-btn btn-kofi">[ ko-fi ]</a>
+        <a href="https://discord.gg/zCnKFt4Y4P" target="_blank" class="win98-btn btn-discord">[ discord ]</a>
+      </div>
+
+      <div class="btn-row" style="margin-top:8px">
+        <a href="index.html" class="win98-btn">[ back to home ]</a>
+      </div>
+
+    </div>
+
+    <div class="win-statusbar">
+      <span class="status-pane grow">prototype 0 &middot; confirmed working &middot; pip PCB nearly final</span>
+      <span class="status-pane">open source / iandchasse</span>
+    </div>
+
+  </div>
+
+  <script>
+    const photos = [
+      { src: 'img/crisp.jpg',      name: 'display &mdash; crisp' },
+      { src: 'img/dune.jpg',       name: 'reading &mdash; dune' },
+      { src: 'img/frontlight.jpg', name: 'frontlight on' },
+      { src: 'img/redgreen.jpg',   name: 'display test' },
+      { src: 'img/lowio2.jpg',     name: 'hardware view' },
+      { src: 'img/frontlight2.png',name: 'frontlight 2' },
+    ];
+
+    let lbIdx = 0;
+    const lb        = document.getElementById('lightbox');
+    const lbImg     = document.getElementById('lb-img');
+    const lbTitle   = document.getElementById('lb-title');
+    const lbCounter = document.getElementById('lb-counter');
+
+    function openLightbox(idx) {
+      lbIdx = ((idx % photos.length) + photos.length) % photos.length;
+      updateLightbox();
+      lb.classList.add('open');
+    }
+    function closeLightbox() { lb.classList.remove('open'); }
+    function updateLightbox() {
+      const p = photos[lbIdx];
+      lbImg.src = p.src;
+      lbImg.alt = 'de-link pre &mdash; ' + p.name;
+      lbTitle.innerHTML = 'de-link pre &mdash; ' + p.name;
+      lbCounter.textContent = (lbIdx + 1) + ' / ' + photos.length;
+    }
+
+    document.getElementById('lb-overlay').addEventListener('click', closeLightbox);
+    document.getElementById('lb-close-btn').addEventListener('click', closeLightbox);
+    document.getElementById('lb-prev').addEventListener('click', () => { lbIdx = (lbIdx - 1 + photos.length) % photos.length; updateLightbox(); });
+    document.getElementById('lb-next').addEventListener('click', () => { lbIdx = (lbIdx + 1) % photos.length; updateLightbox(); });
+
+    document.querySelectorAll('.photo-cell').forEach(cell => {
+      cell.addEventListener('click', () => openLightbox(parseInt(cell.dataset.idx)));
+    });
+
+    document.addEventListener('keydown', e => {
+      if (!lb.classList.contains('open')) return;
+      if (e.key === 'ArrowLeft')  { lbIdx = (lbIdx - 1 + photos.length) % photos.length; updateLightbox(); }
+      if (e.key === 'ArrowRight') { lbIdx = (lbIdx + 1) % photos.length; updateLightbox(); }
+      if (e.key === 'Escape') closeLightbox();
+    });
+  </script>
+
+</body>
+</html>

@@ -4,214 +4,536 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/svg+xml" href="logos/simple-logo-white.svg">
-  <title>de-link — about</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700;900&display=swap" rel="stylesheet">
+  <title>de-link — learn more</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      background-color: #1c1c1c;
+      background:
+        linear-gradient(rgba(20,20,20,0.87), rgba(20,20,20,0.87)),
+        url('img/pcb-render.png') center / cover fixed;
+      font-family: "Courier New", Courier, monospace;
       min-height: 100vh;
       display: flex;
+      flex-direction: column;
       align-items: center;
-      justify-content: center;
-      font-family: "Courier New", Courier, monospace;
-      overflow: hidden;
+      padding: 20px 10px 40px;
     }
 
-    /* faded PCB render as full-bleed background */
-    #bg {
-      position: fixed;
-      inset: 0;
-      background-image: url('img/pcb-render.png');
-      background-size: cover;
-      background-position: center;
-      opacity: 0.13;
-      filter: grayscale(0.4);
-      pointer-events: none;
-    }
-
-    /* Win98 dialog window */
-    .dialog {
-      position: relative;
-      z-index: 1;
-      width: 520px;
-      max-width: 92vw;
+    /* ── App Window ── */
+    .app-window {
+      width: 100%;
+      max-width: 860px;
       background: #c0c0c0;
       border: 2px solid;
-      border-top-color:    #ffffff;
-      border-left-color:   #ffffff;
+      border-top-color: #ffffff;
+      border-left-color: #ffffff;
       border-bottom-color: #808080;
-      border-right-color:  #808080;
-      box-shadow: 4px 4px 0 #000000;
+      border-right-color: #808080;
+      box-shadow: 3px 3px 0 #000000;
     }
 
-    /* title bar */
-    .titlebar {
-      background: linear-gradient(to right, #000080, #1084d0);
-      padding: 5px 7px;
+    /* ── Title Bar ── */
+    .win-titlebar {
+      background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+      height: 22px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      padding: 0 3px 0 6px;
+      gap: 5px;
       user-select: none;
     }
-    .titlebar-title {
+    .win-titlebar-text {
+      flex: 1;
       color: #ffffff;
+      font-size: 12px;
+      font-weight: bold;
+      letter-spacing: 0.3px;
+    }
+    .win-titlebar-btns { display: flex; gap: 2px; }
+    .win-tb-btn {
+      width: 16px; height: 14px;
+      background: #c0c0c0;
+      border: 1px solid;
+      border-top-color: #ffffff;
+      border-left-color: #ffffff;
+      border-bottom-color: #808080;
+      border-right-color: #808080;
+      font-size: 9px; font-weight: bold;
+      display: flex; align-items: center; justify-content: center;
+      cursor: default; color: #000;
+    }
+
+    /* ── Menu Bar ── */
+    .win-menubar {
+      background: #c0c0c0;
+      border-bottom: 1px solid #808080;
+      padding: 2px 4px;
+      display: flex;
+    }
+    .win-menu-item {
       font-size: 13px;
+      padding: 2px 10px;
+      cursor: default;
+      color: #000;
+    }
+    .win-menu-item:hover { background: #000080; color: #fff; }
+
+    /* ── Window Body ── */
+    .win-body {
+      background: #c0c0c0;
+      padding: 14px 16px 20px;
+    }
+
+    /* ── Logo Header ── */
+    .logo-area {
+      text-align: center;
+      padding: 22px 0 18px;
+      border-bottom: 2px solid #808080;
+      margin-bottom: 16px;
+    }
+    /* SVG wordmark + small edition label as subscript beside it */
+    .logo-block {
+      display: inline-flex;
+      flex-direction: row;
+      align-items: flex-end;
+      gap: 10px;
+    }
+    .logo-block img.wordmark {
+      height: clamp(70px, 14vw, 120px);
+      max-width: 80vw;
+      display: block;
+    }
+    .logo-edition {
+      font-family: 'Roboto', sans-serif;
+      font-weight: 700;
+      font-size: 18px;
+      line-height: 1;
+      padding-bottom: 4px;
+    }
+    .edition-pip { color: #1053a4; }
+    .logo-tagline {
+      font-size: 15px;
+      color: #444;
+      margin-top: 12px;
       letter-spacing: 0.5px;
     }
-    .titlebar-btns {
-      display: flex;
-      gap: 2px;
-    }
-    .titlebar-btns span {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 18px;
-      height: 16px;
-      background: #c0c0c0;
-      color: #000;
-      font-size: 10px;
-      font-family: "Courier New", Courier, monospace;
-      border: 1px solid;
-      border-top-color:    #ffffff;
-      border-left-color:   #ffffff;
-      border-bottom-color: #808080;
-      border-right-color:  #808080;
-      cursor: default;
-    }
 
-    /* sunken content panel */
-    .content-panel {
-      margin: 12px;
-      background: #c0c0c0;
-      border: 2px solid;
-      border-top-color:    #808080;
-      border-left-color:   #808080;
-      border-bottom-color: #ffffff;
-      border-right-color:  #ffffff;
-      padding: 32px 28px 28px;
-      text-align: center;
-    }
-
-    .wip-icon {
-      font-size: 38px;
-      margin-bottom: 12px;
-      display: block;
-      line-height: 1;
-    }
-
-    .wip-heading {
-      font-size: 28px;
-      font-weight: bold;
-      color: #111111;
-      letter-spacing: 4px;
-      text-transform: uppercase;
-      margin-bottom: 14px;
-      line-height: 1.1;
-    }
-
-    /* etched divider */
-    .win-hr {
+    /* ── Section separator (between pre and pip areas) ── */
+    .section-rule {
       border: none;
       border-top: 1px solid #808080;
       border-bottom: 1px solid #ffffff;
+      margin: 24px 0 8px;
+    }
+
+    /* ── Sub-header (for pip section) ── */
+    .section-logo-area {
+      text-align: center;
+      padding: 20px 0 14px;
+      border-bottom: 2px solid #808080;
+      margin-bottom: 16px;
+    }
+
+    /* ── Group Box ── */
+    .group-box {
+      border: 1px solid;
+      border-top-color: #808080;
+      border-left-color: #808080;
+      border-bottom-color: #ffffff;
+      border-right-color: #ffffff;
+      margin: 16px 0;
+      padding: 20px 16px 16px;
+      position: relative;
+    }
+    .group-label {
+      position: absolute;
+      top: -10px; left: 12px;
+      background: #c0c0c0;
+      padding: 0 6px;
+      font-size: 13px;
+      font-weight: bold;
+      color: #000;
+      white-space: nowrap;
+    }
+    .group-box p {
+      font-size: 15px;
+      line-height: 1.85;
+      color: #111;
+    }
+    .group-box p + p { margin-top: 14px; }
+    .group-box strong { font-weight: bold; }
+
+    /* ── Pip viewer (sunken panel, landscape) ── */
+    .viewer-frame {
+      border: 2px solid;
+      border-top-color: #808080;
+      border-left-color: #808080;
+      border-bottom-color: #ffffff;
+      border-right-color: #ffffff;
+      background: #1d3557;
+      aspect-ratio: 16 / 9;
+      position: relative;
+      overflow: hidden;
+    }
+    .viewer-frame iframe {
+      width: 100%; height: 100%;
+      border: none; display: block;
+    }
+    .viewer-label {
+      position: absolute;
+      top: 6px; left: 8px;
+      font-size: 9px;
+      letter-spacing: 1px;
+      color: rgba(170,200,220,0.55);
+      text-transform: uppercase;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    /* ── PCB render ── */
+    .pcb-render {
+      border: 2px solid;
+      border-top-color: #808080;
+      border-left-color: #808080;
+      border-bottom-color: #ffffff;
+      border-right-color: #ffffff;
+      overflow: hidden;
+      margin: 14px 0 0;
+    }
+    .pcb-render img { width: 100%; display: block; }
+
+    /* ── Callout Window ── */
+    .callout-window {
+      margin: 16px 0;
+      border: 2px solid;
+      border-top-color: #808080;
+      border-left-color: #808080;
+      border-bottom-color: #ffffff;
+      border-right-color: #ffffff;
+    }
+    .callout-titlebar {
+      background: linear-gradient(90deg, #000080, #1084d0);
+      padding: 3px 8px;
+      font-size: 12px; font-weight: bold;
+      color: #fff;
+    }
+    .callout-body {
+      background: #d4d0c8;
+      padding: 14px 16px;
+      font-size: 15px; color: #111;
+      line-height: 1.85;
+    }
+    .callout-body a { color: #000080; text-decoration: underline; }
+    .callout-body p + p { margin-top: 12px; }
+
+    /* ── Feature Definition Table ── */
+    .feat-dl { margin: 14px 0 0; border-top: 1px solid #808080; }
+    .feat-row {
+      display: grid;
+      grid-template-columns: 130px 1fr;
+      border-bottom: 1px solid #808080;
+    }
+    @media (max-width: 480px) {
+      .feat-row { grid-template-columns: 1fr; }
+    }
+    .feat-key {
+      background: #d4d0c8;
+      padding: 9px 12px;
+      font-size: 13px;
+      font-weight: bold; color: #111;
+      border-right: 1px solid #808080;
+    }
+    .feat-val {
+      padding: 9px 14px;
+      font-size: 14px;
+      color: #111; line-height: 1.6;
+    }
+
+    /* ── Raised Panel ── */
+    .raised-panel {
+      border: 2px solid;
+      border-top-color: #ffffff;
+      border-left-color: #ffffff;
+      border-bottom-color: #808080;
+      border-right-color: #808080;
+      background: #d4d0c8;
+      padding: 22px 24px;
+      text-align: center;
       margin: 16px 0;
     }
-
-    .wip-body {
-      font-size: 13px;
-      color: #333333;
-      line-height: 1.7;
-      margin-bottom: 20px;
+    .raised-panel h2 {
+      font-size: 20px;
+      color: #000;
+      margin-bottom: 12px;
+      letter-spacing: 1px;
+    }
+    .raised-panel p {
+      font-size: 15px;
+      color: #333;
+      line-height: 1.8;
+      max-width: 560px;
+      margin: 0 auto 18px;
     }
 
-    /* button row */
+    /* ── Buttons ── */
     .btn-row {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
+      display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;
+      margin: 10px 0;
     }
-
     .win98-btn {
-      font-family: "Courier New", Courier, monospace;
+      font-family: "Courier New", monospace;
       font-size: 13px;
-      background: #c0c0c0;
-      color: #111111;
-      text-decoration: none;
+      background: #c0c0c0; color: #111;
       border: 2px solid;
-      border-top-color:    #ffffff;
-      border-left-color:   #ffffff;
+      border-top-color: #ffffff;
+      border-left-color: #ffffff;
       border-bottom-color: #808080;
-      border-right-color:  #808080;
-      padding: 6px 28px;
-      cursor: pointer;
+      border-right-color: #808080;
+      padding: 5px 18px;
+      text-decoration: none;
       display: inline-block;
-      min-width: 110px;
+      cursor: pointer;
     }
-    .win98-btn:hover   { background: #d4d4d4; }
-    .win98-btn:active,
-    .win98-btn.pressed {
-      border-top-color:    #808080;
-      border-left-color:   #808080;
-      border-bottom-color: #ffffff;
-      border-right-color:  #ffffff;
+    .win98-btn:hover { background: #d8d8d8; }
+    .win98-btn:active {
+      border-top-color: #808080; border-left-color: #808080;
+      border-bottom-color: #ffffff; border-right-color: #ffffff;
     }
+    .win98-btn.accent {
+      background: #000080; color: #fff;
+      border-top-color: #4444cc; border-left-color: #4444cc;
+      border-bottom-color: #000040; border-right-color: #000040;
+    }
+    .win98-btn.accent:hover { background: #0000a8; }
+    .btn-patreon { color: #F96854; border-color: #a83020; }
+    .btn-kofi    { color: #FF5E5B; border-color: #aa2a28; }
+    .btn-discord { color: #7983f5; border-color: #3a46c4; }
 
-    /* status bar at bottom */
-    .statusbar {
-      border-top: 1px solid #808080;
-      padding: 3px 8px;
-      font-size: 11px;
-      color: #444444;
+    /* ── Status Bar ── */
+    .win-statusbar {
+      background: #c0c0c0;
+      border-top: 2px solid #808080;
       display: flex;
-      gap: 6px;
-      align-items: center;
+      gap: 3px;
+      padding: 3px 5px;
     }
-    .statusbar-field {
+    .status-pane {
       border: 1px solid;
-      border-top-color:    #808080;
-      border-left-color:   #808080;
+      border-top-color: #808080;
+      border-left-color: #808080;
       border-bottom-color: #ffffff;
-      border-right-color:  #ffffff;
-      padding: 1px 6px;
-      flex: 1;
+      border-right-color: #ffffff;
+      padding: 2px 8px;
+      font-size: 11px;
+      color: #000;
     }
+    .status-pane.grow { flex: 1; }
   </style>
 </head>
 <body>
 
-  <div id="bg"></div>
+  <div class="app-window">
 
-  <div class="dialog">
-
-    <div class="titlebar">
-      <span class="titlebar-title">de-link.exe — about</span>
-      <div class="titlebar-btns">
-        <span>_</span>
-        <span>□</span>
-        <span>✕</span>
+    <div class="win-titlebar">
+      <span class="win-titlebar-text">de-link.exe — learn more</span>
+      <div class="win-titlebar-btns">
+        <span class="win-tb-btn">_</span>
+        <span class="win-tb-btn">□</span>
+        <span class="win-tb-btn">✕</span>
       </div>
     </div>
 
-    <div class="content-panel">
-      <span class="wip-icon">⧗</span>
-      <p class="wip-heading">work in progress</p>
-      <div class="win-hr"></div>
-      <p class="wip-body">
-        hardware specs, schematics, photos, and documentation<br>
-        are on the way. follow the project on github for updates<br>
-        or join the mailing list on the main page.
-      </p>
-      <div class="btn-row">
-        <a href="index.html" class="win98-btn">[ ← back ]</a>
-        <a href="https://github.com/iandchasse/de-link" target="_blank" class="win98-btn">[ github ]</a>
-      </div>
+    <div class="win-menubar">
+      <span class="win-menu-item">File</span>
+      <span class="win-menu-item">View</span>
+      <span class="win-menu-item">Help</span>
     </div>
 
-    <div class="statusbar">
-      <span class="statusbar-field">almost ready</span>
-      <span class="statusbar-field">de-link v1.0 codename PIP</span>
+    <div class="win-body">
+
+      <!-- ══════════════════════════════════════
+           THE PLATFORM
+           ══════════════════════════════════════ -->
+
+      <div class="logo-area">
+        <div class="logo-block">
+          <img src="logos/full-logo-transparent.svg" alt="de-link" class="wordmark">
+        </div>
+        <p class="logo-tagline">the last microreader you will ever need to buy</p>
+      </div>
+
+      <div class="group-box">
+        <span class="group-label">The Idea</span>
+        <p>
+          most e-readers are sealed boxes. when the screen breaks, you buy a new one.
+          when the software hits a wall, you wait for an update that may never come.
+          when the manufacturer stops supporting it, your device becomes e-waste.
+        </p>
+        <p>
+          de-link is built on a different premise. the PCB is open-source and hand-solderable.
+          the enclosure is 3D-printable. the software is yours to modify. every component
+          that can break can be replaced individually, for a few dollars, without filing a
+          support ticket.
+        </p>
+        <p>
+          want a bigger screen? get a new GoodDisplay 24-pin panel and print a new case.
+          same PCB, new form. that is the whole point.
+        </p>
+      </div>
+
+      <div class="callout-window">
+        <div class="callout-titlebar">Crosspoint Reader</div>
+        <div class="callout-body">
+          <p>
+            de-link runs <a href="https://crosspointreader.com" target="_blank">crosspoint reader</a>
+            from day one — a community-maintained e-reader firmware with epub parsing, page rendering,
+            fonts, and settings built in. not locked to any device, not maintained by a single company.
+          </p>
+          <p>
+            flash it over USB-C in minutes. modify it if you want. or write your own firmware from scratch.
+            no bricks. no manufacturer restrictions. no locked bootloaders.
+          </p>
+        </div>
+      </div>
+
+      <div class="group-box">
+        <span class="group-label">What Makes It Different</span>
+        <div class="feat-dl">
+          <div class="feat-row">
+            <div class="feat-key">screen</div>
+            <div class="feat-val">any 24-pin GoodDisplay SPI e-paper panel. 3.97", 4.26", 7.5", and more. swap the screen without touching the PCB.</div>
+          </div>
+          <div class="feat-row">
+            <div class="feat-key">case</div>
+            <div class="feat-val">fully 3D-printable. reprint as many times as you want. design your own, or use what the community builds. no molds, no minimums.</div>
+          </div>
+          <div class="feat-row">
+            <div class="feat-key">repair</div>
+            <div class="feat-val">0805 and SOT-23 components throughout. hand-solderable. the BOM is open. if something breaks, replace the part that broke.</div>
+          </div>
+          <div class="feat-row">
+            <div class="feat-key">battery</div>
+            <div class="feat-val">bring your own single-cell 3.7V LiPo with a JST 2.0 connector. salvage one from an old phone, a drone, whatever.</div>
+          </div>
+          <div class="feat-row">
+            <div class="feat-key">software</div>
+            <div class="feat-val">ESP32-S3 with USB-C OTG and no firmware restrictions. use crosspoint reader, fork it, or write something entirely new.</div>
+          </div>
+          <div class="feat-row">
+            <div class="feat-key">frontlight</div>
+            <div class="feat-val">hardware series LED driver on-board for panels with a bonded frontlight. software-controlled cool/warm temperature.</div>
+          </div>
+          <div class="feat-row">
+            <div class="feat-key">storage</div>
+            <div class="feat-val">4-bit SDMMC for fast microSD reads. significantly faster than the single-bit SPI used by most comparable devices.</div>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- ══════════════════════════════════════
+           DE-LINK PIP
+           ══════════════════════════════════════ -->
+
+      <div class="section-rule"></div>
+
+      <div class="section-logo-area">
+        <div class="logo-block">
+          <img src="logos/full-logo-transparent.svg" alt="de-link" class="wordmark">
+          <span class="logo-edition edition-pip">pip</span>
+        </div>
+        <p class="logo-tagline">v1.0 &mdash; where it becomes real</p>
+      </div>
+
+      <div class="group-box">
+        <span class="group-label">3D Model Preview &mdash; drag to rotate</span>
+        <div class="viewer-frame">
+          <div class="viewer-label">drag to rotate &middot; click assemble</div>
+          <iframe
+            src="viewer.html?embed&model=delink-pip.glb"
+            title="de-link pip 3D model"
+            allow="accelerometer"
+            loading="lazy">
+          </iframe>
+        </div>
+      </div>
+
+      <div class="group-box">
+        <span class="group-label">What pip is</span>
+        <p>
+          pip is v1.0 of the de-link platform. the PCB design is almost finished.
+          every lesson from the pre goes in: smaller footprint, thinner profile,
+          lower BOM cost, tighter layout. full KiCad production files will be
+          released publicly on launch.
+        </p>
+        <p>
+          alongside the hardware release, build guides, component sourcing
+          tutorials, and community-contributed firmware will be available to help you get a working
+          device as quickly as possible. the goal is to make de-link the easiest
+          open e-reader to actually build, not just the most capable on paper.
+          de-link is also developed in collaboration with
+          <a href="https://freeink.org" target="_blank" style="color:#000080">freeink.org</a>
+          to keep e-ink reading open, affordable, and free of platform lock-in.
+        </p>
+      </div>
+
+      <div class="callout-window">
+        <div class="callout-titlebar">A note on unit sales</div>
+        <div class="callout-body">
+          <p>
+            unit sales of pip are not promised. sourcing e-paper screens in bulk is genuinely
+            difficult right now. the microreader market has grown significantly over the past
+            year, and panel suppliers are not easy to access at small quantities without
+            significant upfront commitment.
+          </p>
+          <p>
+            that could change. with enough support through
+            <a href="https://www.patreon.com/iandchasse" target="_blank">patreon</a> or
+            <a href="https://ko-fi.com/iandchasse" target="_blank">ko-fi</a>,
+            it becomes more realistic to negotiate with suppliers and commit to a small
+            production run. for now, the priority is getting the open design finished
+            so anyone who wants to source and build their own can do so.
+          </p>
+          <p style="margin-top:10px;">
+            the best path right now is building your own &mdash; or splitting a batch with a few
+            friends. a 5-piece PCBA run keeps per-unit component cost at the prices below.
+            full Gerbers and assembly files will be in the GitHub repo when the PCB is final.
+          </p>
+          <div style="margin-top:12px;">
+            <a href="bom.html" class="win98-btn" style="display:inline-block; font-family:'Courier New',monospace; font-size:12px;">
+              [ view full bill of materials ]
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="raised-panel">
+        <h2>support the project</h2>
+        <p>
+          if you want pip to exist, the best thing you can do is follow the project,
+          join the community, and support development directly.
+        </p>
+        <div class="btn-row">
+          <a href="https://github.com/iandchasse/de-link" target="_blank" class="win98-btn accent">[ github ]</a>
+          <a href="https://www.patreon.com/iandchasse" target="_blank" class="win98-btn btn-patreon">[ patreon ]</a>
+          <a href="https://ko-fi.com/iandchasse" target="_blank" class="win98-btn btn-kofi">[ ko-fi ]</a>
+          <a href="https://discord.gg/zCnKFt4Y4P" target="_blank" class="win98-btn btn-discord">[ discord ]</a>
+        </div>
+      </div>
+
+      <div class="btn-row" style="margin-top:20px">
+        <a href="pre.html" class="win98-btn">[ see the de-link pre prototype ]</a>
+        <a href="index.html" class="win98-btn">[ back to home ]</a>
+      </div>
+
+    </div>
+
+    <div class="win-statusbar">
+      <span class="status-pane grow">platform · pip · v1.0 · PCB design nearly final</span>
+      <span class="status-pane">freeink.org collaboration</span>
     </div>
 
   </div>

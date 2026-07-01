@@ -11,7 +11,7 @@
     body {
       background-color: #1c1c1c;
       color: #cccccc;
-      font-family: "Times New Roman", Times, serif;
+      font-family: "Courier New", Courier, monospace;
       margin: 0;
       padding: 0;
       text-align: center;
@@ -21,7 +21,7 @@
        TILED BACKGROUND
        model-tile.gif is a 400×224 composite with the brick
        pattern baked in: row 0 centres at x=100,300 and
-       row 1 centres at x=0,200 — true staggered rows.
+       row 1 centres at x=0,200, true staggered rows.
        bg-drift  : drifts one full tile (400×224) over 22s
        bg-bounce : lifts whole layer 13px up every 2.6s
        ===================================================== */
@@ -52,7 +52,7 @@
         drop-shadow(0 0 20px rgba(255, 130,  0, 0.28));
     }
 
-    /* per-model amber glow — one radial gradient per model centre
+    /* per-model amber glow, one radial gradient per model centre
        in the 400×224 composite tile, then tiled + synced to the
        same bg-drift and bg-bounce as #bg-tile so each glow patch
        stays locked to its own device as everything drifts.
@@ -182,7 +182,7 @@
       text-shadow: 0 1px 4px rgba(0,0,0,0.8);
     }
 
-    /* ---- divider — Win95 etched line on dark ---- */
+    /* ---- divider / Win95 etched line on dark ---- */
     hr {
       border: none;
       border-top: 1px solid #444444;
@@ -191,7 +191,7 @@
       width: 260px;
     }
 
-    /* ---- learn more — Win95 raised button ---- */
+    /* ---- learn more / Win95 raised button ---- */
     #learn-more {
       font-family: "Courier New", Courier, monospace;
       font-size: 16px;
@@ -357,6 +357,19 @@
 
     <div id="learn-more">
       <a href="about.html">[ learn more ]</a>
+      <a href="pre.html" style="margin-left:14px">[ de-link pre ]</a>
+    </div>
+
+    <hr>
+
+    <div id="platform-pitch" style="padding: 14px 0 4px; font-size: 15px; line-height: 1.85; color: #aaaaaa; max-width: 520px; margin: 0 auto; text-align: center; font-family: 'Courier New', Courier, monospace;">
+      swap the screen. reprint the case. flash your own firmware. de-link is a platform you
+      own completely, not a device you replace.<br><br>
+      <span style="font-size:13px; color:#666; letter-spacing:0.5px">
+        runs <a href="https://crosspointreader.com" target="_blank" style="color:#6699cc; text-decoration:none">crosspoint reader</a>
+        from day one. no locked bootloaders. no bricks.
+        built in open collaboration with <a href="https://freeink.org" target="_blank" style="color:#6699cc; text-decoration:none">freeink.org</a>.
+      </span>
     </div>
 
     <hr>
@@ -379,7 +392,7 @@
 
     <div id="retro-buttons">
 
-      <!-- Patreon — solid P silhouette -->
+      <!-- Patreon: solid P silhouette -->
       <a href="https://www.patreon.com/iandchasse" target="_blank" class="rlink fl-patreon">
         <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <path d="M2 2h7.5C14.9 2 18 5.4 18 9.5S14.9 17 9.5 17H6v5H2V2z"/>
@@ -390,7 +403,7 @@
         </span>
       </a>
 
-      <!-- Ko-Fi — cup + handle + heart -->
+      <!-- Ko-Fi: cup + handle + heart -->
       <a href="https://ko-fi.com/iandchasse" target="_blank" class="rlink fl-kofi">
         <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <path d="M3 8h14l-1.5 12H4.5L3 8zm14 2h1.5c1.7 0 2.5.9 2.5 2.2 0 1.3-.8 2.2-2.5 2.2H17v-4.4zM10 11c-.6-1.2.1-2 1-2 .9 0 1.6.8 1 2l-1 1.8L10 11z"/>
@@ -440,7 +453,7 @@
       btn.setAttribute('aria-pressed', on);
     });
 
-    // Kit newsletter — submit via fetch so the page doesn't redirect
+    // Kit newsletter: submit via fetch so the page doesn't redirect
     const kitForm = document.getElementById('kit-form');
     const kitSuccess = document.getElementById('kit-success');
     kitForm.addEventListener('submit', async (e) => {
@@ -455,6 +468,19 @@
       });
       kitForm.style.display = 'none';
       kitSuccess.style.display = 'block';
+    });
+
+    // 10-click logo easter egg → full editor
+    let logoClicks = 0, logoTimer;
+    document.querySelector('#logo-area img.wordmark').addEventListener('click', () => {
+      clearTimeout(logoTimer);
+      logoClicks++;
+      if (logoClicks >= 10) {
+        logoClicks = 0;
+        window.location.href = 'viewer.html?edit';
+      } else {
+        logoTimer = setTimeout(() => { logoClicks = 0; }, 2000);
+      }
     });
   </script>
 </body>

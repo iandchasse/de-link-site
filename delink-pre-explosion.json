@@ -1,0 +1,1279 @@
+[
+  {
+    "name": "Body1030",
+    "xOffset": 0,
+    "yOffset": -81.9,
+    "zOffset": 0,
+    "meshNames": [
+      "Body1030"
+    ]
+  },
+  {
+    "name": "backscrew covers",
+    "xOffset": 0,
+    "yOffset": -108.6,
+    "zOffset": 0,
+    "meshNames": [
+      "Body1026",
+      "Body1027",
+      "Body1028",
+      "Body1029"
+    ]
+  },
+  {
+    "name": "Body1",
+    "xOffset": 0,
+    "yOffset": -53.3,
+    "zOffset": 0,
+    "meshNames": [
+      "Body1"
+    ]
+  },
+  {
+    "name": "Body6",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body6"
+    ]
+  },
+  {
+    "name": "Body1001",
+    "xOffset": 0,
+    "yOffset": 105.6,
+    "zOffset": 0,
+    "meshNames": [
+      "Body1001"
+    ]
+  },
+  {
+    "name": "Body1017",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body1017"
+    ]
+  },
+  {
+    "name": "Body10",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body10"
+    ]
+  },
+  {
+    "name": "Body11",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body11"
+    ]
+  },
+  {
+    "name": "Body12",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body12"
+    ]
+  },
+  {
+    "name": "Body13",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body13"
+    ]
+  },
+  {
+    "name": "Body14",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body14"
+    ]
+  },
+  {
+    "name": "Body15",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body15"
+    ]
+  },
+  {
+    "name": "Body16",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body16"
+    ]
+  },
+  {
+    "name": "Body17",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body17"
+    ]
+  },
+  {
+    "name": "Body18",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body18"
+    ]
+  },
+  {
+    "name": "Body19",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body19"
+    ]
+  },
+  {
+    "name": "Body2006",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body2006"
+    ]
+  },
+  {
+    "name": "Body20",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body20"
+    ]
+  },
+  {
+    "name": "Body21",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body21"
+    ]
+  },
+  {
+    "name": "Body22",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body22"
+    ]
+  },
+  {
+    "name": "Body23",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body23"
+    ]
+  },
+  {
+    "name": "Body24",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body24"
+    ]
+  },
+  {
+    "name": "Body25",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body25"
+    ]
+  },
+  {
+    "name": "Body26",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body26"
+    ]
+  },
+  {
+    "name": "Body27",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body27"
+    ]
+  },
+  {
+    "name": "Body28",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body28"
+    ]
+  },
+  {
+    "name": "Body29",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body29"
+    ]
+  },
+  {
+    "name": "Body3001",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body3001"
+    ]
+  },
+  {
+    "name": "Body30",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body30"
+    ]
+  },
+  {
+    "name": "Body31",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body31"
+    ]
+  },
+  {
+    "name": "Body32",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body32"
+    ]
+  },
+  {
+    "name": "Body33",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body33"
+    ]
+  },
+  {
+    "name": "Body34",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body34"
+    ]
+  },
+  {
+    "name": "Body35",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body35"
+    ]
+  },
+  {
+    "name": "Body36",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body36"
+    ]
+  },
+  {
+    "name": "Body37",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body37"
+    ]
+  },
+  {
+    "name": "Body38",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body38"
+    ]
+  },
+  {
+    "name": "Body39",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body39"
+    ]
+  },
+  {
+    "name": "Body4001",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body4001"
+    ]
+  },
+  {
+    "name": "Body40",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body40"
+    ]
+  },
+  {
+    "name": "Body41",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body41"
+    ]
+  },
+  {
+    "name": "Body42",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body42"
+    ]
+  },
+  {
+    "name": "Body43",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body43"
+    ]
+  },
+  {
+    "name": "Body44",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body44"
+    ]
+  },
+  {
+    "name": "Body45",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body45"
+    ]
+  },
+  {
+    "name": "Body46",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body46"
+    ]
+  },
+  {
+    "name": "Body47",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body47"
+    ]
+  },
+  {
+    "name": "Body48",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body48"
+    ]
+  },
+  {
+    "name": "Body49",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body49"
+    ]
+  },
+  {
+    "name": "Body5001",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body5001"
+    ]
+  },
+  {
+    "name": "Body50",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body50"
+    ]
+  },
+  {
+    "name": "Body51",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body51"
+    ]
+  },
+  {
+    "name": "Body52",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body52"
+    ]
+  },
+  {
+    "name": "Body6002",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body6002"
+    ]
+  },
+  {
+    "name": "Body7001",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body7001"
+    ]
+  },
+  {
+    "name": "Body8",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body8"
+    ]
+  },
+  {
+    "name": "Body9",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body9"
+    ]
+  },
+  {
+    "name": "Body1010_1",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body1010_1"
+    ]
+  },
+  {
+    "name": "Body1010_2",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body1010_2"
+    ]
+  },
+  {
+    "name": "Body1007_1",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body1007_1"
+    ]
+  },
+  {
+    "name": "Body1007_2",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body1007_2"
+    ]
+  },
+  {
+    "name": "Body1008_1",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body1008_1"
+    ]
+  },
+  {
+    "name": "Body1008_2",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body1008_2"
+    ]
+  },
+  {
+    "name": "Body1023",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body1023"
+    ]
+  },
+  {
+    "name": "Body1002",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body1002"
+    ]
+  },
+  {
+    "name": "Body2",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body2"
+    ]
+  },
+  {
+    "name": "Body3",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body3"
+    ]
+  },
+  {
+    "name": "Body4",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body4"
+    ]
+  },
+  {
+    "name": "Body5",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body5"
+    ]
+  },
+  {
+    "name": "Body6001",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body6001"
+    ]
+  },
+  {
+    "name": "Body7",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body7"
+    ]
+  },
+  {
+    "name": "Body1003",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body1003"
+    ]
+  },
+  {
+    "name": "Body2001",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body2001"
+    ]
+  },
+  {
+    "name": "Body1004",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body1004"
+    ]
+  },
+  {
+    "name": "Body2002",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body2002"
+    ]
+  },
+  {
+    "name": "Body1005",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body1005"
+    ]
+  },
+  {
+    "name": "Body2003",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body2003"
+    ]
+  },
+  {
+    "name": "Body1006",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body1006"
+    ]
+  },
+  {
+    "name": "Body2004",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body2004"
+    ]
+  },
+  {
+    "name": "Body1007",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body1007"
+    ]
+  },
+  {
+    "name": "Body2005",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body2005"
+    ]
+  },
+  {
+    "name": "Body1004_1",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body1004_1"
+    ]
+  },
+  {
+    "name": "Body1004_2",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body1004_2"
+    ]
+  },
+  {
+    "name": "Body1004_3",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body1004_3"
+    ]
+  },
+  {
+    "name": "Body1004_1",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body1004_1"
+    ]
+  },
+  {
+    "name": "Body1004_2",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body1004_2"
+    ]
+  },
+  {
+    "name": "Body1004_3",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body1004_3"
+    ]
+  },
+  {
+    "name": "Body1004_1",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body1004_1"
+    ]
+  },
+  {
+    "name": "Body1004_2",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body1004_2"
+    ]
+  },
+  {
+    "name": "Body1004_3",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body1004_3"
+    ]
+  },
+  {
+    "name": "Body1004_1",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body1004_1"
+    ]
+  },
+  {
+    "name": "Body1004_2",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body1004_2"
+    ]
+  },
+  {
+    "name": "Body1004_3",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body1004_3"
+    ]
+  },
+  {
+    "name": "Body1005_1",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body1005_1"
+    ]
+  },
+  {
+    "name": "Body1005_2",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body1005_2"
+    ]
+  },
+  {
+    "name": "Body1005_1",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body1005_1"
+    ]
+  },
+  {
+    "name": "Body1005_2",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body1005_2"
+    ]
+  },
+  {
+    "name": "Body1005_1",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body1005_1"
+    ]
+  },
+  {
+    "name": "Body1005_2",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body1005_2"
+    ]
+  },
+  {
+    "name": "Body1005_1",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body1005_1"
+    ]
+  },
+  {
+    "name": "Body1005_2",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body1005_2"
+    ]
+  },
+  {
+    "name": "Body1005_1",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body1005_1"
+    ]
+  },
+  {
+    "name": "Body1005_2",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body1005_2"
+    ]
+  },
+  {
+    "name": "Body1020",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body1020"
+    ]
+  },
+  {
+    "name": "Body10001",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body10001"
+    ]
+  },
+  {
+    "name": "Body11001",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body11001"
+    ]
+  },
+  {
+    "name": "Body12001",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body12001"
+    ]
+  },
+  {
+    "name": "Body13001",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body13001"
+    ]
+  },
+  {
+    "name": "Body14001",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body14001"
+    ]
+  },
+  {
+    "name": "Body15001",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body15001"
+    ]
+  },
+  {
+    "name": "Body16001",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body16001"
+    ]
+  },
+  {
+    "name": "Body17001",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body17001"
+    ]
+  },
+  {
+    "name": "Body18001",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body18001"
+    ]
+  },
+  {
+    "name": "Body19001",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body19001"
+    ]
+  },
+  {
+    "name": "Body2007",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body2007"
+    ]
+  },
+  {
+    "name": "Body20001",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body20001"
+    ]
+  },
+  {
+    "name": "Body21001",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body21001"
+    ]
+  },
+  {
+    "name": "Body22001",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body22001"
+    ]
+  },
+  {
+    "name": "Body23001",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body23001"
+    ]
+  },
+  {
+    "name": "Body24001",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body24001"
+    ]
+  },
+  {
+    "name": "Body25001",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body25001"
+    ]
+  },
+  {
+    "name": "Body26001",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body26001"
+    ]
+  },
+  {
+    "name": "Body27001",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body27001"
+    ]
+  },
+  {
+    "name": "Body28001",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body28001"
+    ]
+  },
+  {
+    "name": "Body29001",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body29001"
+    ]
+  },
+  {
+    "name": "Body3002",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body3002"
+    ]
+  },
+  {
+    "name": "Body30001",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body30001"
+    ]
+  },
+  {
+    "name": "Body31001",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body31001"
+    ]
+  },
+  {
+    "name": "Body32001",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body32001"
+    ]
+  },
+  {
+    "name": "Body33001",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body33001"
+    ]
+  },
+  {
+    "name": "Body34001",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body34001"
+    ]
+  },
+  {
+    "name": "Body4002",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body4002"
+    ]
+  },
+  {
+    "name": "Body5002",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body5002"
+    ]
+  },
+  {
+    "name": "Body6003",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body6003"
+    ]
+  },
+  {
+    "name": "Body7002",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body7002"
+    ]
+  },
+  {
+    "name": "Body8001",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body8001"
+    ]
+  },
+  {
+    "name": "Body9001",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body9001"
+    ]
+  },
+  {
+    "name": "Body1022",
+    "xOffset": 0,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body1022"
+    ]
+  },
+  {
+    "name": "Body1035",
+    "xOffset": 0,
+    "yOffset": 33.3,
+    "zOffset": 0,
+    "meshNames": [
+      "Body1035"
+    ]
+  },
+  {
+    "name": "side buttons",
+    "xOffset": 26.7,
+    "yOffset": 0,
+    "zOffset": 0,
+    "meshNames": [
+      "Body1034",
+      "Body1032",
+      "Body1033",
+      "Body1025",
+      "Body1031"
+    ]
+  },
+  {
+    "name": "front buttons",
+    "xOffset": 0,
+    "yOffset": -0.1,
+    "zOffset": -57.1,
+    "meshNames": [
+      "Body1024",
+      "Body2008"
+    ]
+  }
+]

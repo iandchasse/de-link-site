@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/svg+xml" href="logos/simple-logo-white.svg">
+  <title>de-link: model viewer</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #1c1c1c;
+      font-family: "Courier New", Courier, monospace;
+      color: #ccc;
+      height: 100vh;
+      display: flex; flex-direction: column;
+      overflow: hidden;
+      user-select: none;
+    }
+
+    /* ── Title bar (hidden in embed) ── */
+    #titlebar {
+      background: linear-gradient(to right, #000080, #1084d0);
+      padding: 5px 8px;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-shrink: 0;
+    }
+    body.embed #titlebar { display: none; }
+    #titlebar-title { color: #fff; font-size: 13px; letter-spacing: 0.5px; }
+    #titlebar-back {
+      font-family: "Courier New",monospace; font-size: 11px;
+      background: #c0c0c0; color: #111;
+      border: 1px solid;
+      border-top-color: #fff; border-left-color: #fff;
+      border-bottom-color: #808080; border-right-color: #808080;
+      padding: 2px 10px; cursor: pointer; text-decoration: none;
+    }
+
+    #middle { flex: 1; display: flex; overflow: hidden; }
+
+    /* ── Canvas ── */
+    #canvas-wrap { flex: 1; position: relative; overflow: hidden; background: #1d3557; }
+    canvas { display: block; image-rendering: pixelated; image-rendering: crisp-edges; }
+    #scanlines {
+      position: absolute; inset: 0; pointer-events: none;
+      background: repeating-linear-gradient(0deg,transparent,transparent 1px,rgba(0,0,0,.12) 1px,rgba(0,0,0,.12) 2px);
+      z-index: 2;
+    }
+    #vignette {
+      position: absolute; inset: 0; pointer-events: none;
+      background: radial-gradient(ellipse at center,transparent 50%,rgba(0,0,0,.4) 100%);
+      z-index: 3;
+    }
+    #loading {
+      position: absolute; inset: 0; z-index: 10;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      background: #1d3557; color: #8ab4cc; font-size: 13px; gap: 12px;
+    }
+    #loading-bar-wrap {
+      width: 200px; height: 14px; background: #0e1e2e;
+      border: 2px solid;
+      border-top-color: #2a4a6a; border-left-color: #2a4a6a;
+      border-bottom-color: #0a1220; border-right-color: #0a1220;
+    }
+    #loading-bar { height: 100%; width: 0%; background: #4a90d0; transition: width .1s; }
+
+    /* ── Floating embed button ── */
+    #embed-assemble {
+      display: none;
+      position: absolute;
+      bottom: 14px; left: 50%; transform: translateX(-50%);
+      z-index: 20;
+      font-family: "Courier New",monospace; font-size: 12px;
+      background: rgba(192,192,192,0.92); color: #111;
+      border: 2px solid;
+      border-top-color: #fff; border-left-color: #fff;
+      border-bottom-color: #808080; border-right-color: #808080;
+      padding: 4px 18px; cursor: pointer; white-space: nowrap;
+    }
+    #embed-assemble:active {
+      border-top-color: #808080; border-left-color: #808080;
+      border-bottom-color: #fff; border-right-color: #fff;
+    }
+    body.embed #embed-assemble { display: block; }
+
+    /* ── Editor sidebar ── */
+    #editor {
+      width: 310px; min-width: 310px;
+      background: #c0c0c0;
+      border-left: 3px solid #808080;
+      display: none; flex-direction: column; overflow: hidden;
+    }
+    #editor.open { display: flex; }
+    body.embed #editor { display: none !important; }
+
+    #ed-titlebar {
+      background: linear-gradient(to right, #000080, #1084d0);
+      color: #fff; font-size: 12px; padding: 4px 8px;
+      display: flex; justify-content: space-between; align-items: center;
+      flex-shrink: 0;
+    }
+    #ed-titlebar button {
+      font-family: "Courier New",monospace; font-size: 10px;
+      background: #c0c0c0; color: #111;
+      border: 1px solid;
+      border-top-color: #fff; border-left-color: #fff;
+      border-bottom-color: #808080; border-right-color: #808080;
+      width: 18px; height: 16px; cursor: pointer;
+    }
+    #ed-search {
+      font-family: "Courier New",monospace; font-size: 11px;
+      background: #fff; color: #111;
+      border: 2px solid;
+      border-top-color: #808080; border-left-color: #808080;
+      border-bottom-color: #fff; border-right-color: #fff;
+      padding: 4px 6px; margin: 6px 6px 0; outline: none; flex-shrink: 0;
+    }
+    #ed-hint {
+      font-size: 10px; color: #555;
+      padding: 3px 8px 2px; flex-shrink: 0;
+      border-bottom: 1px solid #b0b0b0;
+    }
+    #ed-list { flex: 1; overflow-y: auto; padding: 2px 0; }
+    #ed-list::-webkit-scrollbar { width: 16px; }
+    #ed-list::-webkit-scrollbar-track { background: #c0c0c0; }
+    #ed-list::-webkit-scrollbar-thumb {
+      background: #808080; border: 2px solid #c0c0c0;
+      border-top-color: #fff; border-left-color: #fff;
+    }
+
+    .comp-row { padding: 5px 7px; border-bottom: 1px solid #b8b8b8; cursor: pointer; }
+    .comp-row:hover, .comp-row.hovered { background: #d4d8e8; }
+    .comp-row.selected { background: #000080; color: #fff; }
+
+    .comp-top { display: flex; align-items: baseline; gap: 4px; margin-bottom: 4px; }
+    .comp-name { font-size: 10px; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .comp-count { font-size: 9px; color: #888; flex-shrink: 0; }
+    .comp-row.selected .comp-count { color: #99b; }
+
+    .comp-axes {
+      display: grid; grid-template-columns: 11px 1fr 38px;
+      row-gap: 3px; column-gap: 4px; align-items: center;
+    }
+    .axis-label { font-size: 9px; font-weight: bold; color: #555; line-height: 1; }
+    .axis-label.x { color: #b04040; }
+    .axis-label.y { color: #408040; }
+    .axis-label.z { color: #4040b0; }
+    .comp-row.selected .axis-label.x { color: #f88; }
+    .comp-row.selected .axis-label.y { color: #8f8; }
+    .comp-row.selected .axis-label.z { color: #88f; }
+
+    .comp-slider {
+      -webkit-appearance: none; width: 100%;
+      height: 4px; background: #808080; outline: none; cursor: pointer;
+    }
+    .comp-slider::-webkit-slider-thumb {
+      -webkit-appearance: none; width: 10px; height: 16px;
+      background: #c0c0c0;
+      border: 2px solid;
+      border-top-color: #fff; border-left-color: #fff;
+      border-bottom-color: #444; border-right-color: #444;
+      cursor: ew-resize;
+    }
+    .comp-slider:disabled { opacity: 0.4; cursor: default; }
+    .comp-val { font-size: 9px; text-align: right; color: #222; font-variant-numeric: tabular-nums; }
+    .comp-row.selected .comp-val { color: #cef; }
+
+    #ed-footer {
+      flex-shrink: 0; border-top: 2px solid #fff;
+      padding: 6px; display: flex; flex-wrap: wrap; gap: 4px;
+    }
+    #ed-footer .w98 { font-size: 10px; padding: 3px 8px; flex: 1; text-align: center; }
+    #btn-group-sel { background: #e8e8a0; }
+    #btn-group-sel:disabled, #btn-ungroup-sel:disabled { background: #c0c0c0; color: #888; cursor: default; }
+
+    #ed-lock-bar {
+      display: none; flex-shrink: 0;
+      border-top: 1px solid #80a880;
+      padding: 6px 8px; font-size: 10px;
+      background: #d4e8d4; color: #335533; line-height: 1.5;
+    }
+    #ed-lock-bar.visible { display: block; }
+
+    /* ── Controls bar (hidden in embed) ── */
+    #controls {
+      background: #c0c0c0; border-top: 2px solid #fff;
+      padding: 6px 10px; display: flex; gap: 6px;
+      align-items: center; flex-shrink: 0; flex-wrap: wrap;
+    }
+    body.embed #controls { display: none; }
+
+    .w98 {
+      font-family: "Courier New",monospace; font-size: 12px;
+      background: #c0c0c0; color: #111;
+      border: 2px solid;
+      border-top-color: #fff; border-left-color: #fff;
+      border-bottom-color: #808080; border-right-color: #808080;
+      padding: 3px 12px; cursor: pointer; white-space: nowrap;
+    }
+    .w98:active, .w98.active {
+      border-top-color: #808080; border-left-color: #808080;
+      border-bottom-color: #fff; border-right-color: #fff;
+      background: #b4b4b4;
+    }
+    .sep { width: 1px; height: 20px; border-left: 1px solid #808080; border-right: 1px solid #fff; margin: 0 2px; }
+    #ctrl-hint { margin-left: auto; font-size: 10px; color: #555; }
+    /* Edit-mode only controls */
+    .edit-only { display: none; }
+    body.edit .edit-only { display: inline-block; }
+  </style>
+</head>
+<body>
+
+  <div id="titlebar">
+    <span id="titlebar-title">de-link.exe / 3d model viewer</span>
+    <a href="index.html" id="titlebar-back">← back</a>
+  </div>
+
+  <div id="middle">
+    <div id="canvas-wrap">
+      <canvas id="cv"></canvas>
+      <div id="scanlines"></div>
+      <div id="vignette"></div>
+      <div id="loading">
+        <span id="loading-text">loading model...</span>
+        <div id="loading-bar-wrap"><div id="loading-bar"></div></div>
+      </div>
+      <button id="embed-assemble">[ explode ]</button>
+    </div>
+
+    <div id="editor">
+      <div id="ed-titlebar">
+        <span>explosion editor</span>
+        <button id="btn-close-editor">✕</button>
+      </div>
+      <input id="ed-search" type="text" placeholder="filter components...">
+      <div id="ed-hint">click mesh → select · ctrl+click → multi-select</div>
+      <div id="ed-list"></div>
+      <div id="ed-footer">
+        <button class="w98" id="btn-group-sel" disabled>[ group sel. ]</button>
+        <button class="w98" id="btn-ungroup-sel" disabled>[ ungroup ]</button>
+        <button class="w98" id="btn-reset-all">[ reset all ]</button>
+        <button class="w98" id="btn-export-json">[ export ]</button>
+        <button class="w98" id="btn-import-json">[ import ]</button>
+        <input type="file" id="import-input" accept=".json" style="display:none">
+      </div>
+      <div id="ed-lock-bar">
+        🔒 explosion locked. config file is active.<br>
+        Add <code>?edit</code> to the URL to modify.
+      </div>
+    </div>
+  </div>
+
+  <div id="controls">
+    <button class="w98" id="btn-explode">[ explode ]</button>
+    <button class="w98" id="btn-autorot">[ auto-rotate ]</button>
+    <button class="w98" id="btn-reset">[ reset view ]</button>
+    <div class="sep"></div>
+    <button class="w98" id="btn-edit-expl">[ edit explosion ]</button>
+    <button class="w98 edit-only" id="btn-load-glb">[ load glb ]</button>
+    <input type="file" id="glb-input" accept=".glb,.gltf" style="display:none">
+    <span id="ctrl-hint">drag to orbit · scroll to zoom · right-drag to pan</span>
+  </div>
+
+  <script type="importmap">
+  { "imports": {
+      "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+  } }
+  </script>
+
+  <script type="module">
+    import * as THREE from 'three';
+    import { GLTFLoader }    from 'three/addons/loaders/GLTFLoader.js';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+    // ── URL params ────────────────────────────────────────────────────
+    const params      = new URLSearchParams(location.search);
+    const MODEL_FILE  = params.get('model')  || 'delink.glb';
+    const CONFIG_FILE = params.get('config') || null;   // null = try default
+    const EMBED_MODE  = params.has('embed');
+    const EDIT_MODE   = params.has('edit');
+
+    if (EMBED_MODE) document.body.classList.add('embed');
+    if (EDIT_MODE)  document.body.classList.add('edit');
+
+    // ── Renderer ──────────────────────────────────────────────────────
+    const canvas = document.getElementById('cv');
+    const wrap   = document.getElementById('canvas-wrap');
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: false });
+    renderer.setPixelRatio(1);
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+    // ── Scene ─────────────────────────────────────────────────────────
+    const BG = new THREE.Color(0x1d3557);
+    const scene = new THREE.Scene();
+    scene.background = BG;
+    scene.fog = new THREE.Fog(BG, 12, 30);
+
+    // ── Camera / Controls ─────────────────────────────────────────────
+    const camera = new THREE.PerspectiveCamera(55, 1, 0.01, 100);
+    camera.position.set(0, 2, 6);
+
+    const orbit = new OrbitControls(camera, canvas);
+    orbit.enableDamping = true;
+    orbit.dampingFactor = 0.07;
+    orbit.autoRotate      = true;   // on by default
+    orbit.autoRotateSpeed = 3.6;    // 3× faster
+
+    // ── Auto-rotate timeout: pause on interaction, resume after 10s ───
+    let _autoRotTimer = null;
+    let _userPausedRotate = false; // tracks if toggle button explicitly disabled it
+    function _scheduleRotateResume() {
+      clearTimeout(_autoRotTimer);
+      if (_userPausedRotate) return;
+      _autoRotTimer = setTimeout(() => {
+        orbit.autoRotate = true;
+        const btn = document.getElementById('btn-autorot');
+        if (btn) btn.classList.add('active');
+      }, 10000);
+    }
+    orbit.addEventListener('start', () => {
+      if (!orbit.autoRotate) { return; }
+      orbit.autoRotate = false;
+      const btn = document.getElementById('btn-autorot');
+      if (btn) btn.classList.remove('active');
+      _scheduleRotateResume();
+    });
+
+    // ── Lighting ──────────────────────────────────────────────────────
+    scene.add(new THREE.AmbientLight(0xffffff, 0.55));
+    const key = new THREE.DirectionalLight(0xffeedd, 1.1);
+    key.position.set(4, 6, 4); scene.add(key);
+    const fill = new THREE.DirectionalLight(0x334488, 0.4);
+    fill.position.set(-4, -2, -4); scene.add(fill);
+
+    // ── Resize (1× pixel always) ──────────────────────────────────────
+    function resize() {
+      const cw = wrap.clientWidth  || window.innerWidth;
+      const ch = wrap.clientHeight || (window.innerHeight - 60);
+      renderer.setSize(cw, ch, false);
+      canvas.style.width  = cw + 'px';
+      canvas.style.height = ch + 'px';
+      camera.aspect = cw / ch;
+      camera.updateProjectionMatrix();
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    // ── Material helpers ──────────────────────────────────────────────
+    let flatOn = true;
+    function cloneMat(mat) {
+      const m = mat.clone();
+      m.flatShading = true; m.needsUpdate = true;
+      if (!m.emissive) m.emissive = new THREE.Color(0, 0, 0);
+      return m;
+    }
+    function prepareMesh(m) {
+      if (Array.isArray(m.material)) m.material = m.material.map(cloneMat);
+      else m.material = cloneMat(m.material);
+    }
+
+    // ── Groups ───────────────────────────────────────────────────────
+    let groups = [];
+    let meshToGroup = new Map();
+
+    const COL_HOVER  = new THREE.Color(0.3, 0.5, 1.0);
+    const COL_SELECT = new THREE.Color(0.5, 0.75, 1.0);
+    const COL_NONE   = new THREE.Color(0, 0, 0);
+
+    function setGroupEmissive(idx, col) {
+      if (idx < 0 || idx >= groups.length) return;
+      groups[idx].meshes.forEach(m => [m.material].flat().forEach(mat => mat.emissive?.set(col)));
+    }
+    function rebuildMeshIndex() {
+      meshToGroup.clear();
+      groups.forEach((g, i) => g.meshes.forEach(m => meshToGroup.set(m.uuid, i)));
+    }
+    function makeGroup(name, meshes, existingGroups) {
+      const bbox = new THREE.Box3();
+      meshes.forEach(m => bbox.expandByObject(m));
+      const ctr = bbox.getCenter(new THREE.Vector3());
+      const origPos = meshes.map(m => {
+        const og = existingGroups?.find(g => g.meshes.includes(m));
+        const op = og?.origPos.find(op => op.mesh === m);
+        return { mesh: m, pos: op?.pos ?? m.position.clone() };
+      });
+      return { name, meshes, origPos, bboxCenter: ctr, xOffset: 0, yOffset: 0, zOffset: 0 };
+    }
+
+    // ── Collect groups from GLB ───────────────────────────────────────
+    function collectGroups(model) {
+      groups = [];
+      const claimed = new Set();
+
+      function tryNode(node) {
+        const childMeshes = [];
+        node.traverse(o => { if (o.isMesh && !claimed.has(o.uuid)) childMeshes.push(o); });
+        if (!childMeshes.length) return;
+        if (node.name && node !== model && !node.isMesh) {
+          childMeshes.forEach(m => { claimed.add(m.uuid); prepareMesh(m); });
+          groups.push(makeGroup(node.name, childMeshes, null));
+        } else { node.children.forEach(tryNode); }
+      }
+
+      model.children.forEach(tryNode);
+      model.traverse(o => {
+        if (o.isMesh && !claimed.has(o.uuid)) {
+          claimed.add(o.uuid); prepareMesh(o);
+          groups.push(makeGroup(o.name || `mesh_${groups.length}`, [o], null));
+        }
+      });
+
+      groups.sort((a, b) => b.bboxCenter.y - a.bboxCenter.y);
+      rebuildMeshIndex();
+    }
+
+    // ── Apply saved config ────────────────────────────────────────────
+    function applyConfig(data) {
+      if (!data?.length) return;
+      const meshByName = new Map();
+      groups.forEach(g => g.meshes.forEach(m => meshByName.set(m.name, m)));
+
+      const newGroups = [];
+      data.forEach(entry => {
+        const meshes = (entry.meshNames || []).map(n => meshByName.get(n)).filter(Boolean);
+        if (!meshes.length) {
+          const g = groups.find(g => g.name === entry.name);
+          if (g) { g.xOffset = entry.xOffset ?? 0; g.yOffset = entry.yOffset ?? 0; g.zOffset = entry.zOffset ?? 0; }
+          return;
+        }
+        const g = makeGroup(entry.name, meshes, groups);
+        g.xOffset = entry.xOffset ?? 0;
+        g.yOffset = entry.yOffset ?? 0;
+        g.zOffset = entry.zOffset ?? 0;
+        newGroups.push(g);
+      });
+      if (newGroups.length) { groups = newGroups; rebuildMeshIndex(); }
+    }
+
+    // ── Lock ──────────────────────────────────────────────────────────
+    let editorLocked = false;
+    function lockEditor() {
+      editorLocked = true;
+      document.getElementById('ed-lock-bar').classList.add('visible');
+      document.getElementById('ed-footer').style.display = 'none';
+      btnEditExpl.textContent = '[ view explosion ]';
+    }
+
+    // ── Selection ─────────────────────────────────────────────────────
+    const selectedGroups = new Set();
+    let   hoveredGroup   = -1;
+
+    function clearSelection() {
+      selectedGroups.forEach(i => setGroupEmissive(i, i === hoveredGroup ? COL_HOVER : COL_NONE));
+      selectedGroups.clear(); updateFooterButtons();
+    }
+    function setSelected(idx, additive) {
+      if (!additive) {
+        selectedGroups.forEach(i => { if (i !== idx) setGroupEmissive(i, i === hoveredGroup ? COL_HOVER : COL_NONE); });
+        selectedGroups.clear();
+      }
+      if (idx >= 0) {
+        if (selectedGroups.has(idx) && additive) {
+          selectedGroups.delete(idx);
+          setGroupEmissive(idx, idx === hoveredGroup ? COL_HOVER : COL_NONE);
+        } else {
+          selectedGroups.add(idx);
+          setGroupEmissive(idx, COL_SELECT);
+        }
+      }
+      refreshListSelection(); updateFooterButtons();
+    }
+    function refreshListSelection() {
+      document.querySelectorAll('.comp-row').forEach(r =>
+        r.classList.toggle('selected', selectedGroups.has(parseInt(r.dataset.idx))));
+    }
+    function updateFooterButtons() {
+      const n = selectedGroups.size;
+      const gb = document.getElementById('btn-group-sel');
+      gb.disabled = n < 2;
+      gb.textContent = n >= 2 ? `[ group (${n}) ]` : '[ group sel. ]';
+      const canUngroup = n === 1 && [...selectedGroups].some(i => groups[i]?.meshes.length > 1);
+      document.getElementById('btn-ungroup-sel').disabled = !canUngroup;
+    }
+
+    // ── Raycasting ────────────────────────────────────────────────────
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+    let mouseDown = { x: 0, y: 0 };
+
+    canvas.addEventListener('mousedown', e => { mouseDown = { x: e.clientX, y: e.clientY }; });
+    canvas.addEventListener('click', e => {
+      if (EMBED_MODE) return;
+      if (Math.hypot(e.clientX - mouseDown.x, e.clientY - mouseDown.y) > 5) return;
+      const r = canvas.getBoundingClientRect();
+      mouse.x =  ((e.clientX - r.left) / r.width)  * 2 - 1;
+      mouse.y = -((e.clientY - r.top)  / r.height) * 2 + 1;
+      raycaster.setFromCamera(mouse, camera);
+      const hits = raycaster.intersectObjects(groups.flatMap(g => g.meshes), false);
+      if (!hits.length) { if (!e.ctrlKey && !e.metaKey) clearSelection(); return; }
+      const idx = meshToGroup.get(hits[0].object.uuid) ?? -1;
+      if (idx >= 0) {
+        setSelected(idx, e.ctrlKey || e.metaKey);
+        document.querySelector(`.comp-row[data-idx="${idx}"]`)?.scrollIntoView({ block: 'nearest' });
+      }
+    });
+    canvas.addEventListener('mousemove', e => {
+      if (EMBED_MODE) return;
+      const r = canvas.getBoundingClientRect();
+      mouse.x =  ((e.clientX - r.left) / r.width)  * 2 - 1;
+      mouse.y = -((e.clientY - r.top)  / r.height) * 2 + 1;
+      raycaster.setFromCamera(mouse, camera);
+      const hits = raycaster.intersectObjects(groups.flatMap(g => g.meshes), false);
+      const newH = hits.length ? (meshToGroup.get(hits[0].object.uuid) ?? -1) : -1;
+      if (newH !== hoveredGroup) {
+        if (hoveredGroup >= 0 && !selectedGroups.has(hoveredGroup)) setGroupEmissive(hoveredGroup, COL_NONE);
+        hoveredGroup = newH;
+        if (hoveredGroup >= 0 && !selectedGroups.has(hoveredGroup)) setGroupEmissive(hoveredGroup, COL_HOVER);
+        document.querySelectorAll('.comp-row').forEach(r => r.classList.remove('hovered'));
+        if (hoveredGroup >= 0) document.querySelector(`.comp-row[data-idx="${hoveredGroup}"]`)?.classList.add('hovered');
+      }
+    });
+
+    // ── Explode ───────────────────────────────────────────────────────
+    let explodeT   = 0;
+    let explodeTgt = 0;
+
+    function setExplode(on) {
+      explodeTgt = on ? 1 : 0;
+      const label = on ? '[ assemble ]' : '[ explode ]';
+      document.getElementById('btn-explode').textContent = label;
+      document.getElementById('btn-explode').classList.toggle('active', on);
+      document.getElementById('embed-assemble').textContent = label;
+    }
+
+    function updateExplode(dt) {
+      explodeT += (explodeTgt - explodeT) * Math.min(2.5 * dt, 1);
+      groups.forEach(g => {
+        g.origPos.forEach(({ mesh, pos }) => {
+          mesh.position.copy(pos);
+          mesh.position.x += g.xOffset * explodeT;
+          mesh.position.y += g.yOffset * explodeT;
+          mesh.position.z += g.zOffset * explodeT;
+        });
+      });
+    }
+
+    // ── Load GLB ──────────────────────────────────────────────────────
+    const loader = new GLTFLoader();
+
+    function loadGLB(url, configUrl) {
+      // Clear existing model
+      scene.children
+        .filter(c => c.userData.isModel)
+        .forEach(c => scene.remove(c));
+      groups = []; meshToGroup.clear();
+      explodeT = 0; explodeTgt = 0;
+      document.getElementById('loading').style.display = 'flex';
+      document.getElementById('loading-text').textContent = 'loading model...';
+      document.getElementById('loading-bar').style.width = '0%';
+
+      loader.load(url,
+        gltf => {
+          const model = gltf.scene;
+          model.userData.isModel = true;
+          // Scale first using pre-transform bounding box
+          const box  = new THREE.Box3().setFromObject(model);
+          const size = box.getSize(new THREE.Vector3());
+          model.scale.setScalar(4 / Math.max(size.x, size.y, size.z));
+          // Re-center AFTER scaling so the scale factor doesn't skew the offset
+          model.updateMatrixWorld(true);
+          const box2 = new THREE.Box3().setFromObject(model);
+          const ctr  = box2.getCenter(new THREE.Vector3());
+          model.position.sub(ctr);
+          scene.add(model);
+          model.updateWorldMatrix(true, true);
+
+          collectGroups(model);
+
+          const cfgUrl = configUrl || CONFIG_FILE || 'delink-explosion.json';
+          fetch(cfgUrl, { cache: 'no-cache' })
+            .then(r => r.ok ? r.json() : null)
+            .then(data => {
+              if (data) applyConfig(data);
+              buildEditorList();
+              if (data && !EDIT_MODE) lockEditor();
+            })
+            .catch(() => buildEditorList());
+
+          document.getElementById('loading').style.display = 'none';
+        },
+        prog => {
+          const pct = prog.total ? Math.round(prog.loaded / prog.total * 100) : 0;
+          document.getElementById('loading-text').textContent = `loading... ${pct}%`;
+          document.getElementById('loading-bar').style.width = pct + '%';
+        },
+        err => {
+          document.getElementById('loading-text').textContent =
+            `could not load ${url.split('/').pop()}. check the filename`;
+          console.error(err);
+        }
+      );
+    }
+
+    loadGLB(MODEL_FILE, CONFIG_FILE);
+
+    // ── Editor list ───────────────────────────────────────────────────
+    function buildEditorList(filter = '') {
+      const list = document.getElementById('ed-list');
+      list.innerHTML = '';
+      const lf = filter.toLowerCase();
+
+      groups.forEach((g, idx) => {
+        if (lf && !g.name.toLowerCase().includes(lf)) return;
+        const row = document.createElement('div');
+        row.className = 'comp-row'; row.dataset.idx = idx;
+        if (selectedGroups.has(idx)) row.classList.add('selected');
+        if (hoveredGroup === idx) row.classList.add('hovered');
+
+        const top = document.createElement('div'); top.className = 'comp-top';
+        const nm  = document.createElement('div'); nm.className = 'comp-name'; nm.title = g.name; nm.textContent = g.name;
+        const cnt = document.createElement('span'); cnt.className = 'comp-count';
+        if (g.meshes.length > 1) cnt.textContent = `×${g.meshes.length}`;
+        top.append(nm, cnt);
+
+        const axes = document.createElement('div'); axes.className = 'comp-axes';
+        ['x','y','z'].forEach(axis => {
+          const label = document.createElement('span'); label.className = `axis-label ${axis}`; label.textContent = axis.toUpperCase();
+          const slider = document.createElement('input'); slider.type = 'range'; slider.className = 'comp-slider';
+          slider.min = '-200'; slider.max = '200'; slider.step = '0.5'; slider.value = g[`${axis}Offset`]; slider.disabled = editorLocked;
+          const val = document.createElement('span'); val.className = 'comp-val'; val.textContent = fmtV(g[`${axis}Offset`]);
+          if (!editorLocked) {
+            slider.addEventListener('input', () => { g[`${axis}Offset`] = parseFloat(slider.value); val.textContent = fmtV(g[`${axis}Offset`]); });
+          }
+          axes.append(label, slider, val);
+        });
+
+        row.append(top, axes);
+        row.addEventListener('mouseenter', () => { if (!selectedGroups.has(idx)) setGroupEmissive(idx, COL_HOVER); row.classList.add('hovered'); hoveredGroup = idx; });
+        row.addEventListener('mouseleave', () => { if (!selectedGroups.has(idx)) setGroupEmissive(idx, COL_NONE); row.classList.remove('hovered'); hoveredGroup = -1; });
+        if (!editorLocked) {
+          row.addEventListener('click', e => { if (e.target.tagName === 'INPUT') return; setSelected(idx, e.ctrlKey || e.metaKey); });
+        }
+        list.appendChild(row);
+      });
+    }
+
+    document.getElementById('ed-search').addEventListener('input', e => buildEditorList(e.target.value));
+    function fmtV(v) { return (v >= 0 ? '+' : '') + v.toFixed(1); }
+
+    // ── Group / Ungroup ───────────────────────────────────────────────
+    document.getElementById('btn-group-sel').addEventListener('click', () => {
+      if (selectedGroups.size < 2) return;
+      const idxs = [...selectedGroups].sort((a,b) => a-b);
+      const name = prompt('Group name:', idxs.map(i => groups[i].name).join('+').slice(0,40));
+      if (!name) return;
+      const merged = makeGroup(name, idxs.flatMap(i => groups[i].meshes), groups);
+      idxs.reverse().forEach(i => groups.splice(i,1));
+      groups.splice(Math.min(...idxs), 0, merged);
+      rebuildMeshIndex(); selectedGroups.clear();
+      buildEditorList(document.getElementById('ed-search').value); updateFooterButtons();
+    });
+
+    document.getElementById('btn-ungroup-sel').addEventListener('click', () => {
+      if (selectedGroups.size !== 1) return;
+      const idx = [...selectedGroups][0]; const g = groups[idx];
+      if (g.meshes.length <= 1) return;
+      const split = g.meshes.map(m => { const ng = makeGroup(m.name||'mesh',[m],groups); ng.xOffset=g.xOffset; ng.yOffset=g.yOffset; ng.zOffset=g.zOffset; return ng; });
+      groups.splice(idx,1,...split); rebuildMeshIndex(); selectedGroups.clear();
+      buildEditorList(document.getElementById('ed-search').value); updateFooterButtons();
+    });
+
+    document.getElementById('btn-reset-all').addEventListener('click', () => {
+      groups.forEach(g => { g.xOffset=0; g.yOffset=0; g.zOffset=0; });
+      buildEditorList(document.getElementById('ed-search').value);
+    });
+
+    // ── Export / Import ───────────────────────────────────────────────
+    document.getElementById('btn-export-json').addEventListener('click', () => {
+      const data = groups.map(g => ({ name:g.name, xOffset:g.xOffset, yOffset:g.yOffset, zOffset:g.zOffset, meshNames:g.meshes.map(m=>m.name) }));
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));
+      a.download = MODEL_FILE.replace('.glb','-explosion.json').replace('.gltf','-explosion.json');
+      a.click();
+    });
+
+    const importInput = document.getElementById('import-input');
+    document.getElementById('btn-import-json').addEventListener('click', () => importInput.click());
+    importInput.addEventListener('change', e => {
+      const file = e.target.files[0]; if (!file) return;
+      new FileReader().onload = ev => { try { applyConfig(JSON.parse(ev.target.result)); buildEditorList(document.getElementById('ed-search').value); } catch { alert('invalid json'); } };
+      const fr = new FileReader(); fr.onload = ev => { try { applyConfig(JSON.parse(ev.target.result)); buildEditorList(document.getElementById('ed-search').value); } catch { alert('invalid json'); } };
+      fr.readAsText(file); importInput.value = '';
+    });
+
+    // ── Load GLB from file (edit mode) ────────────────────────────────
+    const glbInput = document.getElementById('glb-input');
+    document.getElementById('btn-load-glb').addEventListener('click', () => glbInput.click());
+    glbInput.addEventListener('change', e => {
+      const file = e.target.files[0]; if (!file) return;
+      editorLocked = false;
+      document.getElementById('ed-lock-bar').classList.remove('visible');
+      document.getElementById('ed-footer').style.display = '';
+      btnEditExpl.textContent = '[ edit explosion ]';
+      loadGLB(URL.createObjectURL(file), null);
+      glbInput.value = '';
+    });
+
+    // ── Render loop ───────────────────────────────────────────────────
+    let last = performance.now();
+    function animate() {
+      requestAnimationFrame(animate);
+      const now = performance.now();
+      const dt  = Math.min((now - last) / 1000, 0.1); last = now;
+      orbit.update(); updateExplode(dt);
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    // ── Control buttons ───────────────────────────────────────────────
+    document.getElementById('btn-explode').addEventListener('click', () => setExplode(!explodeTgt));
+    document.getElementById('embed-assemble').addEventListener('click', () => setExplode(!explodeTgt));
+
+    const btnAutorot = document.getElementById('btn-autorot');
+    btnAutorot.classList.add('active');   // on by default
+    btnAutorot.addEventListener('click', () => {
+      orbit.autoRotate = !orbit.autoRotate;
+      _userPausedRotate = !orbit.autoRotate;
+      clearTimeout(_autoRotTimer);
+      btnAutorot.classList.toggle('active', orbit.autoRotate);
+    });
+
+    document.getElementById('btn-reset').addEventListener('click', () => {
+      orbit.reset(); setExplode(false);
+    });
+
+    const btnEditExpl = document.getElementById('btn-edit-expl');
+    const editorPanel = document.getElementById('editor');
+    btnEditExpl.addEventListener('click', () => {
+      const open = editorPanel.classList.toggle('open');
+      btnEditExpl.classList.toggle('active', open);
+      btnEditExpl.textContent = open ? '[ close editor ]' : (editorLocked ? '[ view explosion ]' : '[ edit explosion ]');
+      resize();
+    });
+    document.getElementById('btn-close-editor').addEventListener('click', () => {
+      editorPanel.classList.remove('open');
+      btnEditExpl.classList.remove('active');
+      btnEditExpl.textContent = editorLocked ? '[ view explosion ]' : '[ edit explosion ]';
+      resize();
+    });
+
+  </script>
+</body>
+</html>
