@@ -533,6 +533,29 @@
         </div>
       </div>
 
+      <div class="callout-window" style="margin-top:16px">
+        <div class="callout-titlebar">Stay in the loop</div>
+        <div class="callout-body">
+          <p>
+            pip is close. drop your email to hear the moment hardware news, build
+            guides, and sourcing files go public &mdash; the open files reach the
+            mailing list and community first, before anything else. no spam,
+            unsubscribe anytime.
+          </p>
+          <form id="about-mail-form"
+                action="https://app.kit.com/forms/9627377/subscriptions" method="post"
+                style="display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-top:6px;">
+            <input type="email" name="email_address" placeholder="your@email.com" required
+                   aria-label="email address"
+                   style="font-family:'Courier New',monospace; font-size:14px; border:2px solid; border-top-color:#808080; border-left-color:#808080; border-bottom-color:#ffffff; border-right-color:#ffffff; background:#ffffff; color:#111; padding:5px 8px; min-width:200px; outline:none;">
+            <button type="submit" class="win98-btn accent" style="cursor:pointer;">[ subscribe ]</button>
+          </form>
+          <p id="about-mail-done" style="display:none; margin-top:10px; font-weight:bold; color:#0a640a;">
+            &#10003; you&rsquo;re on the list &mdash; confirmation email on the way, check spam if you don&rsquo;t see it.
+          </p>
+        </div>
+      </div>
+
       <div class="btn-row" style="margin-top:20px">
         <a href="pre.html" class="win98-btn">[ see the de-link pre prototype ]</a>
         <a href="index.html" class="win98-btn">[ back to home ]</a>
@@ -546,6 +569,25 @@
     </div>
 
   </div>
+
+  <script>
+    (function () {
+      var f = document.getElementById('about-mail-form');
+      if (!f) return;
+      f.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var email = f.querySelector('input[type=email]').value;
+        fetch(f.action, {
+          method: 'POST', mode: 'no-cors',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: 'email_address=' + encodeURIComponent(email)
+        });
+        f.style.display = 'none';
+        document.getElementById('about-mail-done').style.display = 'block';
+      });
+    })();
+  </script>
+  <script src="topbar.js"></script>
 
 </body>
 </html>
