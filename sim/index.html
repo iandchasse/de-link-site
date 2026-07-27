@@ -58,6 +58,26 @@
     cursor: pointer;
   }
   .controls button:hover { background: #353b45; }
+  /* In-page "fit to screen" mode: hide the page chrome and let the reader panel
+     fill the whole viewport, so phones can use it like a native device. */
+  body.fit { overflow: hidden; }
+  body.fit #title, body.fit #legend, body.fit #status { display: none; }
+  body.fit .device {
+    position: fixed; inset: 0; width: 100vw; height: 100vh; height: 100dvh;
+    margin: 0; padding: 0; border-radius: 0; background: #000;
+    display: flex; align-items: center; justify-content: center; z-index: 40;
+  }
+  body.fit canvas { border-radius: 0; }
+  #fitExit {
+    position: fixed; z-index: 50; display: none;
+    top: calc(env(safe-area-inset-top, 0px) + 8px);
+    right: calc(env(safe-area-inset-right, 0px) + 8px);
+    background: rgba(20,22,26,.72); color: #e7ebf0;
+    border: 1px solid #3a414b; border-radius: 8px; padding: 8px 12px;
+    font: 600 13px/1 inherit; cursor: pointer;
+    -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
+  }
+  body.fit #fitExit { display: block; }
   #note { font-size: 11px; color: #7aa2f7; }
   .device {
     position: relative; width: fit-content; padding: 8px; border-radius: 16px;
@@ -117,7 +137,7 @@
     <div class="controls">
       <label for="modelSel">Device</label>
       <select id="modelSel"><option>loading&hellip;</option></select>
-      <button id="fsBtn" type="button" title="Toggle full screen">&#9974; Full screen</button>
+      <button id="fitBtn" type="button" title="Fit the reader to your screen">&#10530; Fit to screen</button>
       <span id="note"></span>
     </div>
   </div>
@@ -129,6 +149,7 @@
   </div>
   <div class="legend" id="legend"></div>
   <div id="status">preparing WebAssembly&hellip;</div>
+  <button id="fitExit" type="button" title="Exit fit-to-screen">&#10530; Exit</button>
   <script>
     var statusEl = document.getElementById('status');
     var spinnerEl = document.getElementById('spinner');
@@ -162,14 +183,25 @@
       var dpr = window.devicePixelRatio || 1;
       var nativeW = Math.max(1, Math.round((canvasEl.width || 480) / dpr));
       var nativeH = Math.max(1, Math.round((canvasEl.height || 800) / dpr));
-      var title = document.getElementById('title');
-      var legend = document.getElementById('legend');
-      // Vertical/horizontal chrome around the panel (title + legend + paddings).
-      var chromeH = (title ? title.offsetHeight : 0) + (legend ? legend.offsetHeight : 0) + 56;
-      var availW = window.innerWidth - 20;
-      var availH = window.innerHeight - chromeH;
-      var scale = Math.min(availW / nativeW, availH / nativeH);
-      scale = Math.max(1, Math.floor(scale)); // integer increments, min 1x
+      var fit = document.body.classList.contains('fit');
+      var availW, availH;
+      if (fit) {
+        // Immersive fit-to-screen: use the whole viewport, no chrome reserved.
+        availW = window.innerWidth;
+        availH = window.innerHeight;
+      } else {
+        var title = document.getElementById('title');
+        var legend = document.getElementById('legend');
+        // Vertical/horizontal chrome around the panel (title + legend + paddings).
+        var chromeH = (title ? title.offsetHeight : 0) + (legend ? legend.offsetHeight : 0) + 56;
+        availW = window.innerWidth - 20;
+        availH = window.innerHeight - chromeH;
+      }
+      var raw = Math.min(availW / nativeW, availH / nativeH);
+      // Fit mode fills the viewport (fractional scale). Normal mode keeps crisp
+      // integer UP-scaling but still allows fractional DOWN-scaling, so the panel
+      // shrinks to fit and never overflows / truncates on small (mobile) screens.
+      var scale = fit ? raw : (raw >= 1 ? Math.floor(raw) : raw);
       canvasEl.style.width = (nativeW * scale) + 'px';
       canvasEl.style.height = (nativeH * scale) + 'px';
     }
@@ -362,33 +394,23 @@
       }
     }, { passive: false });
 
-    // Fullscreen toggle for the reader. Fullscreens the whole page so the
-    // existing integer-scaler (fitPanel) grows the panel to fill the screen.
-    // Works on desktop, Android Chrome, and iPad; hidden where the element
-    // Fullscreen API is unavailable (e.g. iPhone Safari) so there's no dead button.
+    // In-page "fit to screen" (not the browser Fullscreen API): hide the page
+    // chrome and let fitPanel grow the reader panel to fill the whole viewport,
+    // so phones can use it like a native device. Toggle button + floating exit.
     (function () {
-      var fsBtn = document.getElementById('fsBtn');
-      if (!fsBtn) return;
-      var root = document.documentElement;
-      if (!(root.requestFullscreen || root.webkitRequestFullscreen)) {
-        fsBtn.style.display = 'none';
-        return;
-      }
-      function fsEl() { return document.fullscreenElement || document.webkitFullscreenElement; }
-      fsBtn.addEventListener('click', function () {
-        if (!fsEl()) {
-          (root.requestFullscreen || root.webkitRequestFullscreen).call(root);
-        } else {
-          (document.exitFullscreen || document.webkitExitFullscreen).call(document);
-        }
-      });
-      function onChange() {
-        fsBtn.textContent = (fsEl() ? '⛶ Exit full screen' : '⛶ Full screen');
+      var fitBtn = document.getElementById('fitBtn');
+      var fitExit = document.getElementById('fitExit');
+      if (!fitBtn) return;
+      function setFit(on) {
+        document.body.classList.toggle('fit', on);
+        fitBtn.textContent = on ? '⤢ Exit fit' : '⤢ Fit to screen';
         fitPanel();
         canvasEl.focus();
       }
-      document.addEventListener('fullscreenchange', onChange);
-      document.addEventListener('webkitfullscreenchange', onChange);
+      fitBtn.addEventListener('click', function () {
+        setFit(!document.body.classList.contains('fit'));
+      });
+      if (fitExit) fitExit.addEventListener('click', function () { setFit(false); });
     })();
 
     // Flush the IDBFS-backed /.crosspoint state to IndexedDB when the tab is
