@@ -1,0 +1,11 @@
+# Files that must never be uploaded/served as public static assets by
+# `wrangler deploy` (the assets directory is the repo root ".").
+# Excluding .git also stops the whole repo history from being served, and
+# prevents the >25 MiB git pack from failing the deploy.
+.git
+.gitignore
+.assetsignore
+.wrangler
+wrangler.jsonc
+wrangler.toml
+node_modules
