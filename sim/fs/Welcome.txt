@@ -1,0 +1,81 @@
+CrossPoint Reader — Web Demo
+============================
+
+Welcome! You are looking at the real CrossPoint e-reader firmware,
+compiled to WebAssembly and running entirely inside your browser.
+
+There is no emulator shortcut here: this is the same C++ codebase that
+runs on the physical CrossPoint device, built through the CrossPoint
+simulator's hardware-abstraction layer and retargeted from a native
+desktop binary to WASM + SDL2. The e-ink panel you see is drawn to an
+HTML canvas, one 1-bit framebuffer at a time, exactly as the device
+would refresh its display.
+
+How to drive the demo
+---------------------
+
+The device has a small set of physical buttons. On this page they are
+mapped to your keyboard:
+
+  * Left / Right arrows  — previous / next page, or move a selection
+  * Up / Down arrows     — move through menus and lists
+  * Enter                — select / open the highlighted item
+  * Backspace            — go back to the previous screen
+  * Home                 — jump back to the home screen
+
+From the home screen you can browse the bundled book library, open one
+of the sample EPUBs, and page through it. You can also visit Settings to
+see how the device is configured — text size, fonts, reading layout,
+and more. Everything is live.
+
+What is bundled
+---------------
+
+Because this is a read-only demonstration, the filesystem is baked into
+the build and served to your browser. A handful of small sample EPUBs
+live in the "books" folder. They were chosen to exercise different parts
+of the rendering engine: justified prose with kerning and ligatures,
+tables, superscripts and subscripts, text decorations, and embedded
+images.
+
+What is intentionally left out
+------------------------------
+
+The physical device can talk to the world — WiFi, OPDS catalogs,
+KOReader sync, a built-in web file manager, over-the-air firmware
+updates. None of that is available in this demo. Networking is stubbed
+out, and there is no way to upload or transfer files. This keeps the
+demonstration self-contained and safe to host anywhere.
+
+A note on pagination
+--------------------
+
+Reflowable text is laid out on the fly to fit the screen, so the number
+of pages depends on your chosen font and text size. Try changing the
+text size in Settings and then reopening a book — the page count will
+change to match, just like it does on real hardware.
+
+Turn the page to keep reading, or press Home to return to the library
+and open one of the sample books. Enjoy exploring CrossPoint on the web.
+
+--------------------------------------------------------------------
+
+About this build
+----------------
+
+The CrossPoint firmware is organized around a stack of "activities" —
+the home screen, the file browser, the reading views, and the settings
+screens are each an activity, managed by an ActivityManager that runs a
+dedicated render task. On the device that task lives on a FreeRTOS core;
+in this web build it runs on a Web Worker, with the firmware's blocking
+render loop preserved unchanged. Display updates are marshalled to the
+browser's main thread so that SDL can present them to the canvas.
+
+The text engine handles Unicode, bidirectional scripts, hyphenation,
+kerning, and ligatures. Fonts for the user interface are compiled
+directly into the binary, while additional reading fonts can be loaded
+from storage on the physical device. Book formats include EPUB, plain
+text, and several others, parsed and reflowed on demand with a section
+cache so that turning pages stays responsive even on modest hardware.
+
+Thank you for trying the demo.

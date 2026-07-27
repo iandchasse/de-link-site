@@ -1,0 +1,581 @@
+{
+  "version": 1,
+  "files": [
+    {
+      "path": "/fs_/Welcome.txt",
+      "url": "fs/Welcome.txt",
+      "size": 3642,
+      "defer": false
+    },
+    {
+      "path": "/fs_/books/pg1342-images-3.epub",
+      "url": "fs/books/pg1342-images-3.epub",
+      "size": 24835597,
+      "defer": false
+    },
+    {
+      "path": "/fs_/books/pg1513-images-3.epub",
+      "url": "fs/books/pg1513-images-3.epub",
+      "size": 341065,
+      "defer": false
+    },
+    {
+      "path": "/fs_/books/pg1727-images-3.epub",
+      "url": "fs/books/pg1727-images-3.epub",
+      "size": 445688,
+      "defer": false
+    },
+    {
+      "path": "/fs_/books/test_kerning_ligature.epub",
+      "url": "fs/books/test_kerning_ligature.epub",
+      "size": 67150,
+      "defer": false
+    },
+    {
+      "path": "/fs_/books/test_png_images.epub",
+      "url": "fs/books/test_png_images.epub",
+      "size": 97996,
+      "defer": false
+    },
+    {
+      "path": "/fs_/books/test_supsub.epub",
+      "url": "fs/books/test_supsub.epub",
+      "size": 6445,
+      "defer": false
+    },
+    {
+      "path": "/fs_/books/test_tables.epub",
+      "url": "fs/books/test_tables.epub",
+      "size": 68277,
+      "defer": false
+    },
+    {
+      "path": "/fs_/books/test_text_decorations.epub",
+      "url": "fs/books/test_text_decorations.epub",
+      "size": 2987,
+      "defer": false
+    },
+    {
+      "path": "/fs_/dictionaries/wikt-en-en/wikt-en-en-2023-07-27.dict.dz",
+      "url": "fs/dictionaries/wikt-en-en/wikt-en-en-2023-07-27.dict.dz",
+      "size": 26055330,
+      "defer": true
+    },
+    {
+      "path": "/fs_/dictionaries/wikt-en-en/wikt-en-en-2023-07-27.idx",
+      "url": "fs/dictionaries/wikt-en-en/wikt-en-en-2023-07-27.idx",
+      "size": 22353718,
+      "defer": true
+    },
+    {
+      "path": "/fs_/dictionaries/wikt-en-en/wikt-en-en-2023-07-27.ifo",
+      "url": "fs/dictionaries/wikt-en-en/wikt-en-en-2023-07-27.ifo",
+      "size": 376,
+      "defer": true
+    },
+    {
+      "path": "/fs_/fonts/Alegreya/Alegreya_12.cpfont",
+      "url": "fs/fonts/Alegreya/Alegreya_12.cpfont",
+      "size": 573620,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/Alegreya/Alegreya_14.cpfont",
+      "url": "fs/fonts/Alegreya/Alegreya_14.cpfont",
+      "size": 717198,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/Alegreya/Alegreya_16.cpfont",
+      "url": "fs/fonts/Alegreya/Alegreya_16.cpfont",
+      "size": 880272,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/Alegreya/Alegreya_18.cpfont",
+      "url": "fs/fonts/Alegreya/Alegreya_18.cpfont",
+      "size": 1066958,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/AtkinsonHyperlegibleNext/AtkinsonHyperlegibleNext_12.cpfont",
+      "url": "fs/fonts/AtkinsonHyperlegibleNext/AtkinsonHyperlegibleNext_12.cpfont",
+      "size": 351225,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/AtkinsonHyperlegibleNext/AtkinsonHyperlegibleNext_14.cpfont",
+      "url": "fs/fonts/AtkinsonHyperlegibleNext/AtkinsonHyperlegibleNext_14.cpfont",
+      "size": 437096,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/AtkinsonHyperlegibleNext/AtkinsonHyperlegibleNext_16.cpfont",
+      "url": "fs/fonts/AtkinsonHyperlegibleNext/AtkinsonHyperlegibleNext_16.cpfont",
+      "size": 528811,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/AtkinsonHyperlegibleNext/AtkinsonHyperlegibleNext_18.cpfont",
+      "url": "fs/fonts/AtkinsonHyperlegibleNext/AtkinsonHyperlegibleNext_18.cpfont",
+      "size": 639781,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/Bitter/Bitter_12.cpfont",
+      "url": "fs/fonts/Bitter/Bitter_12.cpfont",
+      "size": 542238,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/Bitter/Bitter_14.cpfont",
+      "url": "fs/fonts/Bitter/Bitter_14.cpfont",
+      "size": 671788,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/Bitter/Bitter_16.cpfont",
+      "url": "fs/fonts/Bitter/Bitter_16.cpfont",
+      "size": 815035,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/Bitter/Bitter_18.cpfont",
+      "url": "fs/fonts/Bitter/Bitter_18.cpfont",
+      "size": 982166,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/Domitian/Domitian_12.cpfont",
+      "url": "fs/fonts/Domitian/Domitian_12.cpfont",
+      "size": 639997,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/Domitian/Domitian_14.cpfont",
+      "url": "fs/fonts/Domitian/Domitian_14.cpfont",
+      "size": 797746,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/Domitian/Domitian_16.cpfont",
+      "url": "fs/fonts/Domitian/Domitian_16.cpfont",
+      "size": 972969,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/Domitian/Domitian_18.cpfont",
+      "url": "fs/fonts/Domitian/Domitian_18.cpfont",
+      "size": 1175864,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/GentiumBookPlus/GentiumBookPlus_12.cpfont",
+      "url": "fs/fonts/GentiumBookPlus/GentiumBookPlus_12.cpfont",
+      "size": 557364,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/GentiumBookPlus/GentiumBookPlus_14.cpfont",
+      "url": "fs/fonts/GentiumBookPlus/GentiumBookPlus_14.cpfont",
+      "size": 693343,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/GentiumBookPlus/GentiumBookPlus_16.cpfont",
+      "url": "fs/fonts/GentiumBookPlus/GentiumBookPlus_16.cpfont",
+      "size": 858732,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/GentiumBookPlus/GentiumBookPlus_18.cpfont",
+      "url": "fs/fonts/GentiumBookPlus/GentiumBookPlus_18.cpfont",
+      "size": 1054897,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/IBMPlexMono/IBMPlexMono_12.cpfont",
+      "url": "fs/fonts/IBMPlexMono/IBMPlexMono_12.cpfont",
+      "size": 551654,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/IBMPlexMono/IBMPlexMono_14.cpfont",
+      "url": "fs/fonts/IBMPlexMono/IBMPlexMono_14.cpfont",
+      "size": 704898,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/IBMPlexMono/IBMPlexMono_16.cpfont",
+      "url": "fs/fonts/IBMPlexMono/IBMPlexMono_16.cpfont",
+      "size": 874909,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/IBMPlexMono/IBMPlexMono_18.cpfont",
+      "url": "fs/fonts/IBMPlexMono/IBMPlexMono_18.cpfont",
+      "size": 1093322,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/IBMPlexSans/IBMPlexSans_12.cpfont",
+      "url": "fs/fonts/IBMPlexSans/IBMPlexSans_12.cpfont",
+      "size": 708938,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/IBMPlexSans/IBMPlexSans_14.cpfont",
+      "url": "fs/fonts/IBMPlexSans/IBMPlexSans_14.cpfont",
+      "size": 860389,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/IBMPlexSans/IBMPlexSans_16.cpfont",
+      "url": "fs/fonts/IBMPlexSans/IBMPlexSans_16.cpfont",
+      "size": 1032320,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/IBMPlexSans/IBMPlexSans_18.cpfont",
+      "url": "fs/fonts/IBMPlexSans/IBMPlexSans_18.cpfont",
+      "size": 1259663,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/IBMPlexSerif/IBMPlexSerif_12.cpfont",
+      "url": "fs/fonts/IBMPlexSerif/IBMPlexSerif_12.cpfont",
+      "size": 658717,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/IBMPlexSerif/IBMPlexSerif_14.cpfont",
+      "url": "fs/fonts/IBMPlexSerif/IBMPlexSerif_14.cpfont",
+      "size": 817646,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/IBMPlexSerif/IBMPlexSerif_16.cpfont",
+      "url": "fs/fonts/IBMPlexSerif/IBMPlexSerif_16.cpfont",
+      "size": 995177,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/IBMPlexSerif/IBMPlexSerif_18.cpfont",
+      "url": "fs/fonts/IBMPlexSerif/IBMPlexSerif_18.cpfont",
+      "size": 1223292,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/Inter/Inter_12.cpfont",
+      "url": "fs/fonts/Inter/Inter_12.cpfont",
+      "size": 739221,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/Inter/Inter_14.cpfont",
+      "url": "fs/fonts/Inter/Inter_14.cpfont",
+      "size": 905405,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/Inter/Inter_16.cpfont",
+      "url": "fs/fonts/Inter/Inter_16.cpfont",
+      "size": 1101174,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/Inter/Inter_18.cpfont",
+      "url": "fs/fonts/Inter/Inter_18.cpfont",
+      "size": 1319063,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/LexicaUltralegible/LexicaUltralegible_12.cpfont",
+      "url": "fs/fonts/LexicaUltralegible/LexicaUltralegible_12.cpfont",
+      "size": 331081,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/LexicaUltralegible/LexicaUltralegible_14.cpfont",
+      "url": "fs/fonts/LexicaUltralegible/LexicaUltralegible_14.cpfont",
+      "size": 416846,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/LexicaUltralegible/LexicaUltralegible_16.cpfont",
+      "url": "fs/fonts/LexicaUltralegible/LexicaUltralegible_16.cpfont",
+      "size": 510259,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/LexicaUltralegible/LexicaUltralegible_18.cpfont",
+      "url": "fs/fonts/LexicaUltralegible/LexicaUltralegible_18.cpfont",
+      "size": 617399,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/LibreBaskerville/LibreBaskerville_12.cpfont",
+      "url": "fs/fonts/LibreBaskerville/LibreBaskerville_12.cpfont",
+      "size": 451588,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/LibreBaskerville/LibreBaskerville_14.cpfont",
+      "url": "fs/fonts/LibreBaskerville/LibreBaskerville_14.cpfont",
+      "size": 556067,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/LibreBaskerville/LibreBaskerville_16.cpfont",
+      "url": "fs/fonts/LibreBaskerville/LibreBaskerville_16.cpfont",
+      "size": 674096,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/LibreBaskerville/LibreBaskerville_18.cpfont",
+      "url": "fs/fonts/LibreBaskerville/LibreBaskerville_18.cpfont",
+      "size": 846129,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/Literata/Literata_12.cpfont",
+      "url": "fs/fonts/Literata/Literata_12.cpfont",
+      "size": 773883,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/Literata/Literata_14.cpfont",
+      "url": "fs/fonts/Literata/Literata_14.cpfont",
+      "size": 936284,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/Literata/Literata_16.cpfont",
+      "url": "fs/fonts/Literata/Literata_16.cpfont",
+      "size": 1119604,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/Literata/Literata_18.cpfont",
+      "url": "fs/fonts/Literata/Literata_18.cpfont",
+      "size": 1389600,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/Lora/Lora_12.cpfont",
+      "url": "fs/fonts/Lora/Lora_12.cpfont",
+      "size": 483668,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/Lora/Lora_14.cpfont",
+      "url": "fs/fonts/Lora/Lora_14.cpfont",
+      "size": 602249,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/Lora/Lora_16.cpfont",
+      "url": "fs/fonts/Lora/Lora_16.cpfont",
+      "size": 740855,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/Lora/Lora_18.cpfont",
+      "url": "fs/fonts/Lora/Lora_18.cpfont",
+      "size": 924294,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/Merriweather/Merriweather_12.cpfont",
+      "url": "fs/fonts/Merriweather/Merriweather_12.cpfont",
+      "size": 590808,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/Merriweather/Merriweather_14.cpfont",
+      "url": "fs/fonts/Merriweather/Merriweather_14.cpfont",
+      "size": 725593,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/Merriweather/Merriweather_16.cpfont",
+      "url": "fs/fonts/Merriweather/Merriweather_16.cpfont",
+      "size": 880337,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/Merriweather/Merriweather_18.cpfont",
+      "url": "fs/fonts/Merriweather/Merriweather_18.cpfont",
+      "size": 1056480,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/NotoSansExtended/NotoSansExtended_12.cpfont",
+      "url": "fs/fonts/NotoSansExtended/NotoSansExtended_12.cpfont",
+      "size": 651402,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/NotoSansExtended/NotoSansExtended_14.cpfont",
+      "url": "fs/fonts/NotoSansExtended/NotoSansExtended_14.cpfont",
+      "size": 819984,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/NotoSansExtended/NotoSansExtended_16.cpfont",
+      "url": "fs/fonts/NotoSansExtended/NotoSansExtended_16.cpfont",
+      "size": 1009641,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/NotoSansExtended/NotoSansExtended_18.cpfont",
+      "url": "fs/fonts/NotoSansExtended/NotoSansExtended_18.cpfont",
+      "size": 1223015,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/NotoSerifExtended/NotoSerifExtended_12.cpfont",
+      "url": "fs/fonts/NotoSerifExtended/NotoSerifExtended_12.cpfont",
+      "size": 670413,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/NotoSerifExtended/NotoSerifExtended_14.cpfont",
+      "url": "fs/fonts/NotoSerifExtended/NotoSerifExtended_14.cpfont",
+      "size": 838158,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/NotoSerifExtended/NotoSerifExtended_16.cpfont",
+      "url": "fs/fonts/NotoSerifExtended/NotoSerifExtended_16.cpfont",
+      "size": 1026830,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/NotoSerifExtended/NotoSerifExtended_18.cpfont",
+      "url": "fs/fonts/NotoSerifExtended/NotoSerifExtended_18.cpfont",
+      "size": 1278327,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/OpenDyslexic/OpenDyslexic_10.cpfont",
+      "url": "fs/fonts/OpenDyslexic/OpenDyslexic_10.cpfont",
+      "size": 357527,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/OpenDyslexic/OpenDyslexic_12.cpfont",
+      "url": "fs/fonts/OpenDyslexic/OpenDyslexic_12.cpfont",
+      "size": 467769,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/OpenDyslexic/OpenDyslexic_14.cpfont",
+      "url": "fs/fonts/OpenDyslexic/OpenDyslexic_14.cpfont",
+      "size": 597577,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/OpenDyslexic/OpenDyslexic_8.cpfont",
+      "url": "fs/fonts/OpenDyslexic/OpenDyslexic_8.cpfont",
+      "size": 264727,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/SourceCodePro/SourceCodePro_12.cpfont",
+      "url": "fs/fonts/SourceCodePro/SourceCodePro_12.cpfont",
+      "size": 304503,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/SourceCodePro/SourceCodePro_14.cpfont",
+      "url": "fs/fonts/SourceCodePro/SourceCodePro_14.cpfont",
+      "size": 386186,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/SourceCodePro/SourceCodePro_16.cpfont",
+      "url": "fs/fonts/SourceCodePro/SourceCodePro_16.cpfont",
+      "size": 475774,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/SourceCodePro/SourceCodePro_18.cpfont",
+      "url": "fs/fonts/SourceCodePro/SourceCodePro_18.cpfont",
+      "size": 582447,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/SourceSans3/SourceSans3_12.cpfont",
+      "url": "fs/fonts/SourceSans3/SourceSans3_12.cpfont",
+      "size": 639766,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/SourceSans3/SourceSans3_14.cpfont",
+      "url": "fs/fonts/SourceSans3/SourceSans3_14.cpfont",
+      "size": 776289,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/SourceSans3/SourceSans3_16.cpfont",
+      "url": "fs/fonts/SourceSans3/SourceSans3_16.cpfont",
+      "size": 934271,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/SourceSans3/SourceSans3_18.cpfont",
+      "url": "fs/fonts/SourceSans3/SourceSans3_18.cpfont",
+      "size": 1115275,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/SourceSerif4/SourceSerif4_12.cpfont",
+      "url": "fs/fonts/SourceSerif4/SourceSerif4_12.cpfont",
+      "size": 668337,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/SourceSerif4/SourceSerif4_14.cpfont",
+      "url": "fs/fonts/SourceSerif4/SourceSerif4_14.cpfont",
+      "size": 825598,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/SourceSerif4/SourceSerif4_16.cpfont",
+      "url": "fs/fonts/SourceSerif4/SourceSerif4_16.cpfont",
+      "size": 1001101,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/SourceSerif4/SourceSerif4_18.cpfont",
+      "url": "fs/fonts/SourceSerif4/SourceSerif4_18.cpfont",
+      "size": 1205175,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/Vollkorn/Vollkorn_12.cpfont",
+      "url": "fs/fonts/Vollkorn/Vollkorn_12.cpfont",
+      "size": 709453,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/Vollkorn/Vollkorn_14.cpfont",
+      "url": "fs/fonts/Vollkorn/Vollkorn_14.cpfont",
+      "size": 865222,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/Vollkorn/Vollkorn_16.cpfont",
+      "url": "fs/fonts/Vollkorn/Vollkorn_16.cpfont",
+      "size": 1042830,
+      "defer": false
+    },
+    {
+      "path": "/fs_/fonts/Vollkorn/Vollkorn_18.cpfont",
+      "url": "fs/fonts/Vollkorn/Vollkorn_18.cpfont",
+      "size": 1248808,
+      "defer": false
+    }
+  ]
+}

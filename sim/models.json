@@ -1,0 +1,26 @@
+[
+  {
+    "id": "x4",
+    "label": "XTEINK X4",
+    "w": 480,
+    "h": 800,
+    "touch": false,
+    "note": "Keyboard only."
+  },
+  {
+    "id": "x4pro",
+    "label": "XTEINK X4 Pro",
+    "w": 480,
+    "h": 800,
+    "touch": true,
+    "note": "Touch enabled: click = tap, drag = swipe. Frontlight + Home key."
+  },
+  {
+    "id": "x3",
+    "label": "XTEINK X3",
+    "w": 528,
+    "h": 792,
+    "touch": false,
+    "note": "Keyboard only. 3.7\" 3:2 panel."
+  }
+]

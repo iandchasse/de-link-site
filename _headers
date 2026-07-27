@@ -1,0 +1,11 @@
+# Cross-origin isolation for the CrossPoint WASM reader at /sim/ only.
+# Scoped deliberately — do NOT widen to /* or it will break the 3D viewer
+# (unpkg), Google Fonts, and the Kit mailing form on the other pages.
+/sim/*
+  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Embedder-Policy: require-corp
+
+/sim/fs/*
+  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Embedder-Policy: require-corp
+  Cache-Control: public, max-age=31536000, immutable
