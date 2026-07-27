@@ -52,6 +52,12 @@
     border-radius: 6px; padding: 4px 8px; font-size: 12px; font-family: inherit;
     cursor: pointer;
   }
+  .controls button {
+    background: #2c313a; color: #e7ebf0; border: 1px solid #3a414b;
+    border-radius: 6px; padding: 4px 10px; font-size: 12px; font-family: inherit;
+    cursor: pointer;
+  }
+  .controls button:hover { background: #353b45; }
   #note { font-size: 11px; color: #7aa2f7; }
   .device {
     position: relative; width: fit-content; padding: 8px; border-radius: 16px;
@@ -111,6 +117,7 @@
     <div class="controls">
       <label for="modelSel">Device</label>
       <select id="modelSel"><option>loading&hellip;</option></select>
+      <button id="fsBtn" type="button" title="Toggle full screen">&#9974; Full screen</button>
       <span id="note"></span>
     </div>
   </div>
@@ -338,12 +345,51 @@
     };
 
     // Keep keyboard focus on the panel; stop arrows/space from scrolling the page.
-    window.addEventListener('click', function () { canvasEl.focus(); });
+    // Interactive controls (the model dropdown, the fullscreen button) are
+    // exempt: refocusing the canvas on their click was snapping the native
+    // <select> shut, and swallowing arrow keys was blocking its navigation.
+    function isControl(t) {
+      return !!(t && t.closest && t.closest('select, button, a, input, label, .controls'));
+    }
+    window.addEventListener('click', function (e) {
+      if (isControl(e.target)) return;
+      canvasEl.focus();
+    });
     window.addEventListener('keydown', function (e) {
+      if (isControl(e.target)) return;
       if (["ArrowLeft","ArrowRight","ArrowUp","ArrowDown"," "].indexOf(e.key) !== -1) {
         e.preventDefault();
       }
     }, { passive: false });
+
+    // Fullscreen toggle for the reader. Fullscreens the whole page so the
+    // existing integer-scaler (fitPanel) grows the panel to fill the screen.
+    // Works on desktop, Android Chrome, and iPad; hidden where the element
+    // Fullscreen API is unavailable (e.g. iPhone Safari) so there's no dead button.
+    (function () {
+      var fsBtn = document.getElementById('fsBtn');
+      if (!fsBtn) return;
+      var root = document.documentElement;
+      if (!(root.requestFullscreen || root.webkitRequestFullscreen)) {
+        fsBtn.style.display = 'none';
+        return;
+      }
+      function fsEl() { return document.fullscreenElement || document.webkitFullscreenElement; }
+      fsBtn.addEventListener('click', function () {
+        if (!fsEl()) {
+          (root.requestFullscreen || root.webkitRequestFullscreen).call(root);
+        } else {
+          (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+        }
+      });
+      function onChange() {
+        fsBtn.textContent = (fsEl() ? '⛶ Exit full screen' : '⛶ Full screen');
+        fitPanel();
+        canvasEl.focus();
+      }
+      document.addEventListener('fullscreenchange', onChange);
+      document.addEventListener('webkitfullscreenchange', onChange);
+    })();
 
     // Flush the IDBFS-backed /.crosspoint state to IndexedDB when the tab is
     // hidden or closed, so your reading position survives a plain tab close as
