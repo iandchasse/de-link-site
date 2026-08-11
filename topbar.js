@@ -128,6 +128,50 @@
     style.textContent = CSS;
     document.head.appendChild(style);
 
+    // ---- Windows 98 scrollbar (main site pages, not the sim/viewer) ----
+    // WebKit/Blink get the full treatment: dithered silver track, raised
+    // beveled thumb, and arrow buttons. Firefox falls back to a gray thumb.
+    (function () {
+      function svgUrl(w, h, inner) {
+        var s = "<svg xmlns='http://www.w3.org/2000/svg' width='" + w +
+                "' height='" + h + "'>" + inner + "</svg>";
+        return 'url("data:image/svg+xml,' + encodeURIComponent(s) + '")';
+      }
+      // 2x2 silver/white checker = the classic Win98 track stipple
+      var track = svgUrl(2, 2,
+        "<rect width='2' height='2' fill='#c0c0c0'/>" +
+        "<rect width='1' height='1' fill='#ffffff'/>" +
+        "<rect x='1' y='1' width='1' height='1' fill='#ffffff'/>");
+      function arw(d) { return svgUrl(16, 16, "<path d='" + d + "' fill='#000000'/>"); }
+      var up = arw('M8 5L12 10H4z'), down = arw('M4 6H12L8 11z'),
+          left = arw('M11 4V12L5 8z'), right = arw('M5 4V12L11 8z');
+      // Authentic Win98 double bevel: white/black outer ring + light-gray/dark
+      // inner ring, no flat border (the 98.css raised formula).
+      var raised =
+        'box-shadow:inset -1px -1px #0a0a0a,inset 1px 1px #ffffff,' +
+        'inset -2px -2px #808080,inset 2px 2px #dfdfdf;';
+      var pressed =
+        'box-shadow:inset -1px -1px #ffffff,inset 1px 1px #0a0a0a,' +
+        'inset -2px -2px #dfdfdf,inset 2px 2px #808080;';
+      var css =
+        '::-webkit-scrollbar{width:16px;height:16px;}' +
+        '::-webkit-scrollbar-track{background:#c0c0c0 ' + track + ' repeat;background-size:2px 2px;}' +
+        '::-webkit-scrollbar-corner{background:#c0c0c0;}' +
+        '::-webkit-scrollbar-thumb{background:#c0c0c0;' + raised + '}' +
+        '::-webkit-scrollbar-button:single-button{display:block;width:16px;height:16px;' +
+          'background:#c0c0c0;background-repeat:no-repeat;background-position:center;' + raised + '}' +
+        '::-webkit-scrollbar-button:single-button:active{' + pressed + 'background-position:calc(50% + 1px) calc(50% + 1px);}' +
+        '::-webkit-scrollbar-button:single-button:vertical:decrement{background-image:' + up + ';}' +
+        '::-webkit-scrollbar-button:single-button:vertical:increment{background-image:' + down + ';}' +
+        '::-webkit-scrollbar-button:single-button:horizontal:decrement{background-image:' + left + ';}' +
+        '::-webkit-scrollbar-button:single-button:horizontal:increment{background-image:' + right + ';}' +
+        '@supports not selector(::-webkit-scrollbar){html{scrollbar-width:auto;scrollbar-color:#c0c0c0 #dfdfdf;}}';
+      var sb = document.createElement('style');
+      sb.id = 'win98-scrollbar';
+      sb.textContent = css;
+      document.head.appendChild(sb);
+    })();
+
     var holder = document.createElement('div');
     holder.innerHTML = HTML;
     var nodes = Array.prototype.slice.call(holder.childNodes);
