@@ -116,7 +116,7 @@
   .controls button[aria-pressed="true"] { background: #2d4373; border-color: #4d6bb3; color: #fff; }
   #stage3d {
     display: none; position: relative; width: min(96vw, 720px);
-    flex: 1 1 auto; min-height: 460px; align-self: stretch;
+    flex: 0 0 auto; min-height: 460px; align-self: center;
     touch-action: none; cursor: grab;
   }
   #stage3d:active { cursor: grabbing; }
@@ -128,7 +128,17 @@
      so getBoundingClientRect stays valid for forwarded pointer events. */
   body.mode3d .device.offstage {
     display: block; position: fixed; left: -10000px; top: 0;
-    pointer-events: none; opacity: 0;
+    pointer-events: none;
+  }
+  /* The wake splash lives inside the (offstage) 2D device, so in 3D it has to be
+     re-anchored to the viewport or waking looks like the model vanished. Fixed
+     positioning escapes the offstage parent; that parent must therefore not be
+     hidden with opacity, which would take this with it. */
+  body.mode3d #wakeOverlay {
+    position: fixed; inset: auto; left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    width: 210px; height: 150px; border-radius: 10px;
+    box-shadow: 0 8px 30px rgba(0,0,0,.45);
   }
   #hint3d {
     position: absolute; left: 0; right: 0; bottom: 4px; text-align: center;
@@ -153,7 +163,7 @@
     <div id="spinner" class="spinner"></div>
     <div id="wakeOverlay"><div class="wsp"></div><div class="wl">Waking&hellip;</div></div>
   </div>
-  <div id="stage3d"><div id="hint3d">drag the screen to swipe &middot; drag off it to orbit &middot; press the side buttons &middot; scroll to zoom</div></div>
+  <div id="stage3d"><div id="hint3d">drag the screen to swipe &middot; drag off it to orbit &middot; click the rockers &amp; side buttons &middot; scroll to zoom</div></div>
   <div class="legend" id="legend"></div>
   <div id="status">preparing WebAssembly&hellip;</div>
   <script>
@@ -377,8 +387,17 @@
     };
 
     // Keep keyboard focus on the panel; stop arrows/space from scrolling the page.
-    window.addEventListener('click', function () { canvasEl.focus(); });
+    // Skip the refocus when the click landed on a real control -- stealing focus
+    // out of an open <select> collapses its dropdown before you can pick an item.
+    window.addEventListener('click', function (e) {
+      if (e.target && e.target.closest && e.target.closest('select, button, input, a, label')) return;
+      canvasEl.focus();
+    });
     window.addEventListener('keydown', function (e) {
+      // Don't hijack arrows while a form control has focus, or the device
+      // dropdown can't be keyboard-navigated.
+      var a = document.activeElement;
+      if (a && a.closest && a.closest('select, button, input, a')) return;
       if (["ArrowLeft","ArrowRight","ArrowUp","ArrowDown"," "].indexOf(e.key) !== -1) {
         e.preventDefault();
       }
@@ -588,6 +607,15 @@
       // Keep keystrokes going to the reader in either mode.
       canvasEl.focus({ preventScroll: true });
       window.__mode3d = on;
+
+      // A device "wake" is a full page reload, so the chosen view has to live in
+      // the URL or waking always drops you back into 2D.
+      try {
+        const u = new URL(location.href);
+        if (on) u.searchParams.set('view', '3d');
+        else u.searchParams.delete('view');
+        history.replaceState(null, '', u);
+      } catch (_) {}
     }
 
     btn.addEventListener('click', () => apply(btn.getAttribute('aria-pressed') !== 'true'));
