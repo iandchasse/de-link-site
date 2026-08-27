@@ -114,9 +114,17 @@
   }
   .controls button:hover { background: #353b45; }
   .controls button[aria-pressed="true"] { background: #2d4373; border-color: #4d6bb3; color: #fff; }
+  /* Grows to eat every row the header and legend leave behind, so the scene is
+     as tall as the window allows instead of sitting in a fixed box with dead
+     space above and below it.
+     flex-basis MUST be 0, not auto: the WebGL canvas is sized from the host's
+     own client box, so a content-derived basis would make host height depend on
+     the canvas and the canvas depend on the host. Basis 0 + grow makes the
+     height come purely from the leftover column space. The canvas is also taken
+     out of flow (see cp3d.js) so it can never feed back into this measurement. */
   #stage3d {
     display: none; position: relative; width: min(96vw, 720px);
-    flex: 0 0 auto; min-height: 460px; align-self: center;
+    flex: 1 1 0; min-height: 280px; align-self: center;
     touch-action: none; cursor: grab;
   }
   #stage3d:active { cursor: grabbing; }
