@@ -52,32 +52,6 @@
     border-radius: 6px; padding: 4px 8px; font-size: 12px; font-family: inherit;
     cursor: pointer;
   }
-  .controls button {
-    background: #2c313a; color: #e7ebf0; border: 1px solid #3a414b;
-    border-radius: 6px; padding: 4px 10px; font-size: 12px; font-family: inherit;
-    cursor: pointer;
-  }
-  .controls button:hover { background: #353b45; }
-  /* In-page "fit to screen" mode: hide the page chrome and let the reader panel
-     fill the whole viewport, so phones can use it like a native device. */
-  body.fit { overflow: hidden; }
-  body.fit #title, body.fit #legend, body.fit #status { display: none; }
-  body.fit .device {
-    position: fixed; inset: 0; width: 100vw; height: 100vh; height: 100dvh;
-    margin: 0; padding: 0; border-radius: 0; background: #000;
-    display: flex; align-items: center; justify-content: center; z-index: 40;
-  }
-  body.fit canvas { border-radius: 0; }
-  #fitExit {
-    position: fixed; z-index: 50; display: none;
-    top: calc(env(safe-area-inset-top, 0px) + 8px);
-    right: calc(env(safe-area-inset-right, 0px) + 8px);
-    background: rgba(20,22,26,.72); color: #e7ebf0;
-    border: 1px solid #3a414b; border-radius: 8px; padding: 8px 12px;
-    font: 600 13px/1 inherit; cursor: pointer;
-    -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
-  }
-  body.fit #fitExit { display: block; }
   #note { font-size: 11px; color: #7aa2f7; }
   .device {
     position: relative; width: fit-content; padding: 8px; border-radius: 16px;
@@ -85,8 +59,11 @@
   }
   /* The panel is a portrait e-ink frame. It is integer-scaled by JS (fitPanel)
      to the largest whole multiple of its native size that fits the window, and
-     drawn with nearest-neighbour so dithered grays stay crisp. */
-  canvas {
+     drawn with nearest-neighbour so dithered grays stay crisp.
+     Scoped by id, not element: a bare `canvas` selector also catches the
+     three.js canvas in 3D mode and paints an opaque white sheet over the
+     scene's transparent background. */
+  #canvas {
     display: block; background: #fff; border-radius: 4px;
     image-rendering: pixelated;
     box-shadow: 0 0 0 1px #000, 0 6px 20px rgba(0,0,0,.45); outline: none;
@@ -128,6 +105,35 @@
   }
   #wakeOverlay .wl { font-size: 14px; font-weight: 600; letter-spacing: .4px; color: #3a3f47; }
   @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* --- 3D device view -------------------------------------------------- */
+  .controls button {
+    background: #2c313a; color: #e7ebf0; border: 1px solid #3a414b;
+    border-radius: 6px; padding: 4px 10px; font-size: 12px; font-family: inherit;
+    cursor: pointer;
+  }
+  .controls button:hover { background: #353b45; }
+  .controls button[aria-pressed="true"] { background: #2d4373; border-color: #4d6bb3; color: #fff; }
+  #stage3d {
+    display: none; position: relative; width: min(96vw, 720px);
+    flex: 1 1 auto; min-height: 460px; align-self: stretch;
+    touch-action: none; cursor: grab;
+  }
+  #stage3d:active { cursor: grabbing; }
+  body.mode3d #stage3d { display: block; }
+  body.mode3d .device { display: none; }
+  /* In 3D the SDL canvas must keep rendering -- it owns the WebGL context and
+     the firmware's present path -- so it is moved offstage rather than hidden.
+     display:none would risk the context being dropped. It keeps its real size
+     so getBoundingClientRect stays valid for forwarded pointer events. */
+  body.mode3d .device.offstage {
+    display: block; position: fixed; left: -10000px; top: 0;
+    pointer-events: none; opacity: 0;
+  }
+  #hint3d {
+    position: absolute; left: 0; right: 0; bottom: 4px; text-align: center;
+    font-size: 11px; color: #6f7681; pointer-events: none;
+  }
 </style>
 </head>
 <body>
@@ -137,7 +143,7 @@
     <div class="controls">
       <label for="modelSel">Device</label>
       <select id="modelSel"><option>loading&hellip;</option></select>
-      <button id="fitBtn" type="button" title="Fit the reader to your screen">&#10530; Fit to screen</button>
+      <button id="view3d" type="button" aria-pressed="false" title="Project the live panel onto the device model">3D view</button>
       <span id="note"></span>
     </div>
   </div>
@@ -147,9 +153,9 @@
     <div id="spinner" class="spinner"></div>
     <div id="wakeOverlay"><div class="wsp"></div><div class="wl">Waking&hellip;</div></div>
   </div>
+  <div id="stage3d"><div id="hint3d">drag the screen to swipe &middot; drag off it to orbit &middot; press the side buttons &middot; scroll to zoom</div></div>
   <div class="legend" id="legend"></div>
   <div id="status">preparing WebAssembly&hellip;</div>
-  <button id="fitExit" type="button" title="Exit fit-to-screen">&#10530; Exit</button>
   <script>
     var statusEl = document.getElementById('status');
     var spinnerEl = document.getElementById('spinner');
@@ -168,6 +174,11 @@
       if (waking && ov) ov.classList.add('show');
       var hidden = false;
       window.cpwebFirstFrame = function () {
+        // Also the readiness latch for anything that calls into the WASM
+        // exports: before the runtime is initialised those symbols exist as
+        // stubs that abort on call, so "is the function defined?" is not a
+        // safe test. A painted frame proves the runtime is live.
+        window.__cpFirstFrame = true;
         if (hidden || !ov) return; hidden = true;
         ov.classList.add('hide');
         setTimeout(function () { ov.classList.remove('show', 'hide'); }, 450);
@@ -183,25 +194,14 @@
       var dpr = window.devicePixelRatio || 1;
       var nativeW = Math.max(1, Math.round((canvasEl.width || 480) / dpr));
       var nativeH = Math.max(1, Math.round((canvasEl.height || 800) / dpr));
-      var fit = document.body.classList.contains('fit');
-      var availW, availH;
-      if (fit) {
-        // Immersive fit-to-screen: use the whole viewport, no chrome reserved.
-        availW = window.innerWidth;
-        availH = window.innerHeight;
-      } else {
-        var title = document.getElementById('title');
-        var legend = document.getElementById('legend');
-        // Vertical/horizontal chrome around the panel (title + legend + paddings).
-        var chromeH = (title ? title.offsetHeight : 0) + (legend ? legend.offsetHeight : 0) + 56;
-        availW = window.innerWidth - 20;
-        availH = window.innerHeight - chromeH;
-      }
-      var raw = Math.min(availW / nativeW, availH / nativeH);
-      // Fit mode fills the viewport (fractional scale). Normal mode keeps crisp
-      // integer UP-scaling but still allows fractional DOWN-scaling, so the panel
-      // shrinks to fit and never overflows / truncates on small (mobile) screens.
-      var scale = fit ? raw : (raw >= 1 ? Math.floor(raw) : raw);
+      var title = document.getElementById('title');
+      var legend = document.getElementById('legend');
+      // Vertical/horizontal chrome around the panel (title + legend + paddings).
+      var chromeH = (title ? title.offsetHeight : 0) + (legend ? legend.offsetHeight : 0) + 56;
+      var availW = window.innerWidth - 20;
+      var availH = window.innerHeight - chromeH;
+      var scale = Math.min(availW / nativeW, availH / nativeH);
+      scale = Math.max(1, Math.floor(scale)); // integer increments, min 1x
       canvasEl.style.width = (nativeW * scale) + 'px';
       canvasEl.style.height = (nativeH * scale) + 'px';
     }
@@ -377,41 +377,12 @@
     };
 
     // Keep keyboard focus on the panel; stop arrows/space from scrolling the page.
-    // Interactive controls (the model dropdown, the fullscreen button) are
-    // exempt: refocusing the canvas on their click was snapping the native
-    // <select> shut, and swallowing arrow keys was blocking its navigation.
-    function isControl(t) {
-      return !!(t && t.closest && t.closest('select, button, a, input, label, .controls'));
-    }
-    window.addEventListener('click', function (e) {
-      if (isControl(e.target)) return;
-      canvasEl.focus();
-    });
+    window.addEventListener('click', function () { canvasEl.focus(); });
     window.addEventListener('keydown', function (e) {
-      if (isControl(e.target)) return;
       if (["ArrowLeft","ArrowRight","ArrowUp","ArrowDown"," "].indexOf(e.key) !== -1) {
         e.preventDefault();
       }
     }, { passive: false });
-
-    // In-page "fit to screen" (not the browser Fullscreen API): hide the page
-    // chrome and let fitPanel grow the reader panel to fill the whole viewport,
-    // so phones can use it like a native device. Toggle button + floating exit.
-    (function () {
-      var fitBtn = document.getElementById('fitBtn');
-      var fitExit = document.getElementById('fitExit');
-      if (!fitBtn) return;
-      function setFit(on) {
-        document.body.classList.toggle('fit', on);
-        fitBtn.textContent = on ? '⤢ Exit fit' : '⤢ Fit to screen';
-        fitPanel();
-        canvasEl.focus();
-      }
-      fitBtn.addEventListener('click', function () {
-        setFit(!document.body.classList.contains('fit'));
-      });
-      if (fitExit) fitExit.addEventListener('click', function () { setFit(false); });
-    })();
 
     // Flush the IDBFS-backed /.crosspoint state to IndexedDB when the tab is
     // hidden or closed, so your reading position survives a plain tab close as
@@ -494,6 +465,136 @@
         statusEl.textContent =
           'No model bundles found. Build them with: python build.py all';
       });
+  </script>
+
+  <!-- 3D device view. Loaded as a module so it can be tree-shaken out of the
+       2D path entirely: nothing here runs, and three.js is never fetched,
+       unless the user actually presses the button. -->
+  <script type="importmap">
+    { "imports": { "three": "./three/three.module.min.js" } }
+  </script>
+  <script type="module">
+    const btn = document.getElementById('view3d');
+    const stage = document.getElementById('stage3d');
+    const deviceEl = document.getElementById('device');
+    const canvasEl = document.getElementById('canvas');
+    let dev = null, loading = false;
+
+    function setNote(t) { document.getElementById('note').textContent = t || ''; }
+
+    // Forward a pointer on the 3D panel to the same spot on the real SDL canvas.
+    // This reuses the existing mouse->touch mapping instead of adding another
+    // WASM export: the canvas is offstage but still laid out, so its bounding
+    // rect is valid and SDL's own listeners do the rest.
+    //
+    // The 'mousemove' is not optional. SDL_SendMouseButton carries no
+    // coordinates -- HalGPIO reads e.button.x/y, which SDL fills from the
+    // position it cached from the last SDL_MOUSEMOTION. Send a bare mousedown
+    // and the tap lands wherever the pointer happened to be beforehand.
+    function forwardToCanvas(type, uv) {
+      const r = canvasEl.getBoundingClientRect();
+      if (!r.width || !r.height) return;
+      canvasEl.dispatchEvent(new MouseEvent(type, {
+        clientX: r.left + uv.x * r.width,
+        clientY: r.top + (1 - uv.y) * r.height,
+        bubbles: true, cancelable: true, view: window, button: 0,
+        buttons: type === 'mouseup' ? 0 : 1,
+      }));
+    }
+
+    // Physical buttons go in as keystrokes, which HalGPIO already maps to
+    // BTN_*. `code` is what matters: SDL's Emscripten backend derives its
+    // scancode from it. Holding the pointer holds the button, so long-press
+    // (power off, etc.) works as it does on the real device.
+    function forwardKey(type, b) {
+      canvasEl.dispatchEvent(new KeyboardEvent(type, {
+        key: b.key, code: b.code, keyCode: b.keyCode, which: b.keyCode,
+        bubbles: true, cancelable: true, view: window,
+      }));
+    }
+
+    async function enable3d() {
+      if (dev || loading) return;
+      loading = true;
+      setNote('loading 3D\u2026');
+      try {
+        const { Device3D } = await import('./three/cp3d.js');
+        dev = new Device3D(stage, { fbW: 800, fbH: 480 });
+        window.__dev3d = dev;   // handy for calibration from the console
+        const info = await dev.load((m) => setNote(m));
+        dev.start();
+        setNote(info.tris.toLocaleString() + ' tris');
+
+        // Pointer routing. These sit on the stage in the *capture* phase so they
+        // run before OrbitControls, which listens on the renderer canvas
+        // underneath. Swallowing the event there is what stops a swipe across
+        // the glass from also spinning the model: anything that misses the
+        // panel and the buttons is left alone and orbits as usual.
+        let drag = null;
+        const onDown = (e) => {
+          const hit = dev.pick(e.clientX, e.clientY);
+          if (!hit) return;                  // off the device -> orbit
+          e.stopPropagation();
+          e.preventDefault();
+          try { stage.setPointerCapture(e.pointerId); } catch (_) {}
+          if (hit.kind === 'button') {
+            drag = { kind: 'button', button: hit.button, mesh: hit.mesh };
+            dev.setButtonActive(hit.mesh, true);
+            forwardKey('keydown', hit.button);
+          } else {
+            drag = { kind: 'screen', last: hit.uv };
+            forwardToCanvas('mousemove', hit.uv);
+            forwardToCanvas('mousedown', hit.uv);
+          }
+        };
+        const onMove = (e) => {
+          if (!drag) return;
+          e.stopPropagation();
+          if (drag.kind !== 'screen') return;
+          const uv = dev.projectToPanel(e.clientX, e.clientY);
+          if (uv) { drag.last = uv; forwardToCanvas('mousemove', uv); }
+        };
+        const onUp = (e) => {
+          if (!drag) return;
+          e.stopPropagation();
+          if (drag.kind === 'button') {
+            forwardKey('keyup', drag.button);
+            dev.setButtonActive(drag.mesh, false);
+          } else {
+            const uv = dev.projectToPanel(e.clientX, e.clientY) || drag.last;
+            if (uv) forwardToCanvas('mouseup', uv);
+          }
+          try { stage.releasePointerCapture(e.pointerId); } catch (_) {}
+          drag = null;
+        };
+        stage.addEventListener('pointerdown', onDown, true);
+        stage.addEventListener('pointermove', onMove, true);
+        stage.addEventListener('pointerup', onUp, true);
+        stage.addEventListener('pointercancel', onUp, true);
+      } catch (err) {
+        console.error('[3d] failed', err);
+        setNote('3D failed: ' + err.message);
+        dev = null;
+      } finally { loading = false; }
+    }
+
+    function apply(on) {
+      document.body.classList.toggle('mode3d', on);
+      deviceEl.classList.toggle('offstage', on);
+      btn.setAttribute('aria-pressed', String(on));
+      btn.textContent = on ? '2D view' : '3D view';
+      if (on) { enable3d().then(() => { if (dev) { dev.start(); dev.resize(); } }); }
+      else { if (dev) dev.stop(); setNote(''); }
+      // Keep keystrokes going to the reader in either mode.
+      canvasEl.focus({ preventScroll: true });
+      window.__mode3d = on;
+    }
+
+    btn.addEventListener('click', () => apply(btn.getAttribute('aria-pressed') !== 'true'));
+    if (new URLSearchParams(location.search).get('view') === '3d') {
+      apply(true);
+    }
+    window.__enable3d = () => apply(true);
   </script>
 </body>
 </html>
