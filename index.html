@@ -3,509 +3,307 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image/svg+xml" href="logos/simple-logo-white.svg">
-  <title>de-link</title>
+  <title>de-link is now silkscreen</title>
+  <meta name="description" content="de-link is now silkscreen: an open, repairable ESP32-S3 e-paper reader board, shaped with the community. Redirecting to silkscreenreader.com.">
+  <link rel="canonical" href="https://silkscreenreader.com/">
+  <meta property="og:site_name" content="Silkscreen">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://silkscreenreader.com/">
+  <meta property="og:title" content="de-link is now silkscreen">
+  <meta property="og:description" content="An open, repairable ESP32-S3 e-paper reader board, shaped with the community, and the successor to de-link.">
+  <meta property="og:image" content="https://silkscreenreader.com/og-silkscreen.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://silkscreenreader.com/og-silkscreen.png">
+  <link rel="icon" type="image/svg+xml" href="logos/silkscreen-favicon.svg">
+  <!-- no-JS fallback: scripting handles the 5s redirect, this only runs without it -->
+  <noscript><meta http-equiv="refresh" content="5;url=https://silkscreenreader.com/"></noscript>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
   <style>
+    /* =====================================================================
+       de-link -> silkscreen transition page.
+       Timeline (5s total, then redirect):
+         0.0s   de-link homepage look (dark, model tile, Courier)
+         1.1s   e-ink full-refresh flash (black/white/black/white)
+         1.65s  silkscreen card "ghost-draws" in, like an e-ink partial update
+         5.0s   redirect to https://silkscreenreader.com/
+       Silkscreen tokens mirror silkscreen-site/src/styles.css.
+       Add ?stay to the URL to watch it without being redirected.
+       ===================================================================== */
+    :root {
+      /* de-link */
+      --dl-bg: #1c1c1c;
+      --dl-ink: #d0d0d0;
+      /* silkscreen (light, its default) */
+      --ss-bg: oklch(0.985 0.003 85);
+      --ss-secondary: oklch(0.955 0.006 85);
+      --ss-ink: oklch(0.16 0 0);
+      --ss-strong: oklch(0.05 0 0);
+      --ss-muted: oklch(0.44 0.008 85);
+      --ss-border: oklch(0.85 0.005 85);
+      --ss-hairline: oklch(0.72 0.005 85);
+      --grain: rgba(38, 41, 35, 0.62);
+      --font-display: "Libre Baskerville", Georgia, "Times New Roman", serif;
+      --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+      color-scheme: light;
+    }
     * { box-sizing: border-box; }
-
+    html, body { margin: 0; }
     body {
-      background-color: #1c1c1c;
-      color: #cccccc;
-      font-family: "Courier New", Courier, monospace;
-      margin: 0;
-      padding: 0;
-      text-align: center;
+      background: var(--ss-secondary);
+      color: var(--ss-ink);
+      font-family: var(--font-sans);
+      -webkit-font-smoothing: antialiased;
     }
 
-    /* =====================================================
-       TILED BACKGROUND
-       model-tile.gif is a 400×224 composite with the brick
-       pattern baked in: row 0 centres at x=100,300 and
-       row 1 centres at x=0,200, true staggered rows.
-       bg-drift  : drifts one full tile (400×224) over 22s
-       bg-bounce : lifts whole layer 13px up every 2.6s
-       ===================================================== */
-    #bg-tile {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      pointer-events: none;
-      opacity: 0.28;
-      background-image: url('img/model-tile.gif');
-      background-repeat: repeat;
-      animation:
-        bg-drift   22s linear       infinite,
-        bg-bounce  2.6s ease-in-out infinite;
-      /* filter transition for frontlight toggle */
-      filter: none;
-      transition: filter 0.7s ease, opacity 0.7s ease;
-    }
-    /* when frontlight is ON:
-       sepia+saturate turns white screen pixels amber;
-       drop-shadow inside filter creates bloom around
-       those bright pixels only (dark PCB = no bloom) */
-    body.lit #bg-tile {
-      opacity: 0.38;
-      filter:
-        sepia(0.5) saturate(3.5) brightness(1.2)
-        drop-shadow(0 0  7px rgba(255, 175, 40, 0.55))
-        drop-shadow(0 0 20px rgba(255, 130,  0, 0.28));
-    }
-
-    /* per-model amber glow, one radial gradient per model centre
-       in the 400×224 composite tile, then tiled + synced to the
-       same bg-drift and bg-bounce as #bg-tile so each glow patch
-       stays locked to its own device as everything drifts.
-
-       Model centres inside the 400×224 tile (at display size 200×112):
-         row 0: (100, 56) and (300, 56)
-         row 1: (0, 168), (200, 168), (400, 168)   ← 0 and 400 are
-                                                      the same edge,
-                                                      included so the
-                                                      wrapped model
-                                                      gets its glow too
-    */
-    #bg-glow {
-      position: fixed;
-      inset: 0;
-      z-index: 1;
-      pointer-events: none;
-      background-image:
-        radial-gradient(ellipse 110px 66px at 100px  56px, rgba(255,175,40,0.20) 0%, transparent 100%),
-        radial-gradient(ellipse 110px 66px at 300px  56px, rgba(255,175,40,0.20) 0%, transparent 100%),
-        radial-gradient(ellipse 110px 66px at   0px 168px, rgba(255,175,40,0.20) 0%, transparent 100%),
-        radial-gradient(ellipse 110px 66px at 200px 168px, rgba(255,175,40,0.20) 0%, transparent 100%),
-        radial-gradient(ellipse 110px 66px at 400px 168px, rgba(255,175,40,0.20) 0%, transparent 100%);
-      background-size: 400px 224px;
-      background-repeat: repeat;
-      opacity: 0;
-      /* drift+bounce always run so position stays synced with
-         #bg-tile regardless of frontlight state */
-      animation:
-        bg-drift  22s linear       infinite,
-        bg-bounce  2.6s ease-in-out infinite;
-    }
-
-    /* GIF is 56 frames × ~83 ms = 4648 ms per full spin.
-       Screen faces the user at the halfway point, so a 0→1→0
-       pulse over 4648 ms locks the glow to the rotation. */
-    @keyframes glow-pulse {
-      0%   { opacity: 0;    }
-      50%  { opacity: 0.6;  }
-      100% { opacity: 0;    }
-    }
-    body.lit #bg-glow {
-      animation:
-        bg-drift   22s     linear       infinite,
-        bg-bounce   2.6s   ease-in-out  infinite,
-        glow-pulse  4.648s ease-in-out  infinite;
-      animation-delay: 0s, 0s, -3230ms;
-    }
-
-    @keyframes bg-drift {
-      from { background-position: 0px   0px; }
-      to   { background-position: 400px 224px; }
-    }
-    @keyframes bg-bounce {
-      0%,  100% { transform: translateY(0px);   }
-      45%, 55%  { transform: translateY(-13px); }
-    }
-
-    /* ---- frontlight toggle button ---- */
-    #fl-btn {
-      position: fixed;
-      bottom: 18px;
-      right: 18px;
-      z-index: 10;
-      font-family: "Courier New", Courier, monospace;
-      font-size: 10px;
-      letter-spacing: 0.5px;
-      background: #c0c0c0;
-      color: #111111;
-      border: 2px solid;
-      border-top-color: #ffffff;
-      border-left-color: #ffffff;
-      border-bottom-color: #808080;
-      border-right-color: #808080;
-      padding: 5px 11px;
-      cursor: pointer;
-      transition: background 0.4s ease, box-shadow 0.4s ease, color 0.4s ease;
-    }
-    #fl-btn:active {
-      border-top-color: #808080;
-      border-left-color: #808080;
-      border-bottom-color: #ffffff;
-      border-right-color: #ffffff;
-    }
-    body.lit #fl-btn {
-      background: #ffbe3c;
-      color: #111111;
-      box-shadow: 0 0 12px rgba(255, 185, 50, 0.9),
-                  0 0 28px rgba(255, 140,  0, 0.4);
-    }
-
-    /* =====================================================
-       CONTENT
-       ===================================================== */
-    #wrap {
+    /* ---------- silkscreen layer (the destination) ---------- */
+    .silk {
       position: relative;
-      z-index: 2;
-      max-width: 640px;
-      margin: 0 auto;
-      padding: 0 24px;
-    }
-
-    /* ---- logo ---- */
-    #logo-area {
-      padding: 64px 0 12px;
-    }
-    #logo-area img.wordmark {
-      width: 420px;
-      max-width: 100%;
-      /* invert the black SVG paths to white on dark bg */
-      filter: invert(1);
-      transition: filter 0.7s ease;
-    }
-    /* amber glow traces the letter edges when frontlight is on */
-    body.lit #logo-area img.wordmark {
-      filter: invert(1)
-        drop-shadow(0 0  6px rgba(255, 185, 40, 0.95))
-        drop-shadow(0 0 16px rgba(255, 140,  0, 0.65))
-        drop-shadow(0 0 36px rgba(255, 110,  0, 0.30));
-    }
-    #tagline {
-      font-family: "Courier New", Courier, monospace;
-      font-size: 17px;
-      color: #d0d0d0;
-      margin: 10px 0 0;
-      letter-spacing: 1.5px;
-      text-shadow: 0 1px 4px rgba(0,0,0,0.8);
-    }
-
-    /* ---- divider / Win95 etched line on dark ---- */
-    hr {
-      border: none;
-      border-top: 1px solid #444444;
-      border-bottom: 1px solid #000000;
-      margin: 30px auto;
-      width: 260px;
-    }
-
-    /* ---- learn more / Win95 raised button ---- */
-    #learn-more {
-      font-family: "Courier New", Courier, monospace;
-      font-size: 16px;
-    }
-    #learn-more a {
-      color: #111111;
-      text-decoration: none;
-      display: inline-block;
-      padding: 4px 18px;
-      background-color: #c0c0c0;
-      border: 2px solid;
-      border-top-color: #ffffff;
-      border-left-color: #ffffff;
-      border-bottom-color: #808080;
-      border-right-color: #808080;
-    }
-    #learn-more a:hover { background-color: #b4b4b4; }
-    #learn-more a:active {
-      border-top-color: #808080;
-      border-left-color: #808080;
-      border-bottom-color: #ffffff;
-      border-right-color: #ffffff;
-    }
-    @media (max-width: 480px) {
-      #learn-more {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 10px;
-      }
-      #learn-more a { margin-left: 0 !important; width: 100%; max-width: 260px; }
-    }
-
-    /* ---- newsletter ---- */
-    #newsletter { margin: 0 auto; }
-    #newsletter p {
-      font-family: "Courier New", Courier, monospace;
-      font-size: 15px;
-      color: #d0d0d0;
-      margin: 0 0 12px;
-      text-shadow: 0 1px 4px rgba(0,0,0,0.8);
-    }
-    #newsletter input[type="email"] {
-      font-family: "Courier New", Courier, monospace;
-      font-size: 14px;
-      border: 2px solid;
-      border-top-color: #555555;
-      border-left-color: #555555;
-      border-bottom-color: #c0c0c0;
-      border-right-color: #c0c0c0;
-      background: #ffffff;
-      color: #111111;
-      padding: 4px 8px;
-      width: 200px;
-      outline: none;
-    }
-    #newsletter input[type="email"]::placeholder { color: #aaaaaa; }
-    #newsletter button[type="submit"] {
-      font-family: "Courier New", Courier, monospace;
-      font-size: 14px;
-      background: #c0c0c0;
-      color: #111111;
-      border: 2px solid;
-      border-top-color: #ffffff;
-      border-left-color: #ffffff;
-      border-bottom-color: #808080;
-      border-right-color: #808080;
-      padding: 4px 14px;
-      cursor: pointer;
-      margin-left: 4px;
-    }
-    #newsletter button[type="submit"]:hover { background: #b4b4b4; }
-    #newsletter button[type="submit"]:active {
-      border-top-color: #808080;
-      border-left-color: #808080;
-      border-bottom-color: #ffffff;
-      border-right-color: #ffffff;
-    }
-
-    /* ---- flash link buttons ---- */
-    #retro-buttons {
+      isolation: isolate;
+      min-height: 100vh;
+      min-height: 100dvh;
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      max-width: 580px;
-      margin: 0 auto;
+      place-items: center;
+      padding: clamp(16px, 4vw, 48px);
     }
-    .rlink {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 13px 16px;
-      text-decoration: none;
-      border: 2px solid;
-      cursor: pointer;
-      min-height: 64px;
+    /* silkscreen's dithered-dot gutter grain, gathered into soft patches */
+    .silk::before {
+      content: "";
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background-image: radial-gradient(circle, var(--grain) 0.9px, transparent 1.7px);
+      background-size: 6px 6px;
+      -webkit-mask-image:
+        radial-gradient(70% 58% at 16% 14%, #000 0%, transparent 70%),
+        radial-gradient(66% 62% at 86% 86%, #000 0%, transparent 66%);
+      mask-image:
+        radial-gradient(70% 58% at 16% 14%, #000 0%, transparent 70%),
+        radial-gradient(66% 62% at 86% 86%, #000 0%, transparent 66%);
+      animation: grain-drift 90s linear infinite;
     }
-    .rlink svg {
-      width: 26px;
-      height: 26px;
-      flex-shrink: 0;
-      fill: currentColor;
-    }
-    .rlink-text { display: flex; flex-direction: column; text-align: left; line-height: 1.4; }
-    .rlink-primary {
-      font-family: "Courier New", Courier, monospace;
-      font-size: 13px;
-      font-weight: bold;
-      letter-spacing: 0.5px;
-    }
-    .rlink-sub {
-      font-family: "Courier New", Courier, monospace;
-      font-size: 11px;
-      letter-spacing: 0.2px;
-      margin-top: 4px;
-      opacity: 0.85;
-    }
-    @media (max-width: 480px) {
-      #retro-buttons {
-        grid-template-columns: 1fr;
-        justify-items: center;
-      }
-      .rlink {
-        width: 100%;
-        max-width: 320px;
-        justify-content: center;
-        text-align: center;
-      }
-      .rlink-text { text-align: center; }
-    }
-    @keyframes fl-patreon {
-      0%,49%   { background:#F96854; color:#fff; border-color:#c94535; }
-      50%,100% { background:#1e0e0c; color:#F96854; border-color:#F96854; }
-    }
-    @keyframes fl-kofi {
-      0%,49%   { background:#FF5E5B; color:#fff; border-color:#cc3a37; }
-      50%,100% { background:#1e0c0c; color:#FF5E5B; border-color:#FF5E5B; }
-    }
-    @keyframes fl-discord {
-      0%,49%   { background:#5865F2; color:#fff; border-color:#3a46c4; }
-      50%,100% { background:#0d0e1e; color:#7983f5; border-color:#5865F2; }
-    }
-    @keyframes fl-github {
-      0%,49%   { background:#f0f0f0; color:#111; border-color:#aaa; }
-      50%,100% { background:#111; color:#ccc; border-color:#555; }
-    }
-    /* default: static dark state */
-    .fl-patreon { background:#1e0e0c; color:#F96854; border-color:#F96854; }
-    .fl-kofi    { background:#1e0c0c; color:#FF5E5B; border-color:#FF5E5B; }
-    .fl-discord { background:#0d0e1e; color:#7983f5; border-color:#5865F2; }
-    .fl-github  { background:#111111; color:#cccccc; border-color:#555555; }
-    /* hover / tap: rapid flash kicks in */
-    .fl-patreon:hover { animation: fl-patreon 0.35s steps(1) infinite; }
-    .fl-kofi:hover    { animation: fl-kofi    0.35s steps(1) infinite; }
-    .fl-discord:hover { animation: fl-discord 0.35s steps(1) infinite; }
-    .fl-github:hover  { animation: fl-github  0.35s steps(1) infinite; }
+    @keyframes grain-drift { to { background-position: 300px -220px; } }
 
-    /* ---- footer ---- */
-    #footer {
-      padding: 28px 0 44px;
-      font-family: "Courier New", Courier, monospace;
-      font-size: 13px;
-      color: #777777;
-      text-shadow: 0 1px 3px rgba(0,0,0,0.9);
+    .card {
+      position: relative; z-index: 1;
+      width: min(100%, 47rem);
+      background: var(--ss-bg);
+      border: 2px solid var(--ss-strong);
+      opacity: 0;
+      animation: ghost-draw 0.3s steps(1, end) 1.65s forwards;
     }
-    #footer a { color: #777777; }
-    #footer a:hover { color: #aaaaaa; }
+    /* e-ink partial update: faint ghost, darker, then fully drawn */
+    @keyframes ghost-draw {
+      0%   { opacity: 0.3; }
+      50%  { opacity: 0.65; }
+      100% { opacity: 1; }
+    }
+    .card-body { padding: clamp(1.75rem, 5vw, 3rem); }
+
+    .lockup {
+      display: flex; align-items: center; gap: clamp(0.75rem, 3vw, 1.5rem);
+      padding-bottom: clamp(1.25rem, 3.5vw, 1.75rem);
+      border-bottom: 1px solid var(--ss-border);
+    }
+    .lockup .delink-logo {
+      /* the de-link SVG declares a square 2000x2000 canvas around a 1500x425
+         viewBox, so size it by width with the viewBox's real aspect ratio */
+      width: clamp(118px, 24vw, 150px); height: auto; aspect-ratio: 1500 / 425;
+      opacity: 0.45;
+    }
+    .lockup .silk-logo { height: clamp(28px, 5.6vw, 40px); width: auto; max-width: 100%; }
+    .lockup .arrow { flex-shrink: 0; width: 34px; height: 14px; color: var(--ss-muted); }
+
+    .label-mono {
+      font-family: var(--font-sans);
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ss-muted);
+      margin: 0;
+    }
+    .eyebrow { margin-top: clamp(1.25rem, 3.5vw, 1.75rem); }
+    h1 {
+      font-family: var(--font-display);
+      font-weight: 400;
+      font-size: clamp(2rem, 6.2vw, 3.3rem);
+      line-height: 1.08;
+      letter-spacing: -0.01em;
+      color: var(--ss-strong);
+      margin: 0.6rem 0 0;
+      text-wrap: balance;
+    }
+    h1 em { font-style: italic; }
+    .lede {
+      margin: 1.1rem 0 0;
+      max-width: 36rem;
+      font-size: 1.06rem;
+      line-height: 1.65;
+      color: var(--ss-muted);
+    }
+    .lede a { color: var(--ss-ink); text-underline-offset: 4px; }
+
+    .card-foot {
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+      gap: 0.9rem 1.25rem;
+      border-top: 2px solid var(--ss-strong);
+      padding: 1rem clamp(1.75rem, 5vw, 3rem);
+    }
+    .count b { font-variant-numeric: tabular-nums; color: var(--ss-strong); font-weight: 600; }
+    .go {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: var(--ss-strong); color: var(--ss-bg);
+      font: 500 0.9rem/1 var(--font-sans);
+      padding: 0.8rem 1.15rem;
+      text-decoration: none;
+    }
+    .go:hover { background: oklch(0.25 0 0); }
+    .go:focus-visible, .replay:focus-visible, .lede a:focus-visible {
+      outline: 2px solid var(--ss-strong); outline-offset: 3px;
+    }
+    .replay { color: var(--ss-ink); font: inherit; background: none; border: 0; padding: 0; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+
+    /* 5s progress rule along the bottom of the card */
+    .bar { height: 3px; background: var(--ss-border); }
+    .bar i {
+      display: block; height: 100%; width: 0; background: var(--ss-strong);
+      animation: fill 5s linear forwards;
+    }
+    @keyframes fill { to { width: 100%; } }
+    .paused .bar i { animation-play-state: paused; }
+
+    @media (max-width: 520px) {
+      .lockup { flex-direction: column; align-items: flex-start; gap: 0.6rem; }
+      .lockup .arrow { transform: rotate(90deg); margin-left: 4px; }
+      .card-foot { flex-direction: column; align-items: stretch; }
+      .go { justify-content: center; }
+    }
+
+    /* ---------- de-link layer (where we start) ---------- */
+    .delink {
+      position: fixed; inset: 0; z-index: 20;
+      display: grid; place-items: center; align-content: center;
+      background: var(--dl-bg);
+      color: var(--dl-ink);
+      font-family: "Courier New", Courier, monospace;
+      text-align: center;
+      padding: 24px;
+      overflow: hidden;
+      animation: hide 0s linear 1.3s forwards;
+    }
+    .delink::before {
+      content: "";
+      position: absolute; inset: 0;
+      background: url("img/model-tile.gif") repeat;
+      opacity: 0.28;
+      animation: tile-drift 22s linear infinite;
+    }
+    @keyframes tile-drift { to { background-position: 400px 224px; } }
+    .delink img {
+      position: relative;
+      width: min(420px, 80vw);
+      filter: invert(1);
+    }
+    .delink p {
+      position: relative;
+      margin: 14px 0 0;
+      font-size: 17px;
+      letter-spacing: 1.5px;
+      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+    }
+    @keyframes hide { to { visibility: hidden; } }
+
+    /* ---------- e-ink full refresh flash between the two ---------- */
+    .refresh {
+      position: fixed; inset: 0; z-index: 30; pointer-events: none;
+      background: #000; opacity: 0;
+      animation: eink 0.6s steps(1, end) 1.1s forwards;
+    }
+    @keyframes eink {
+      0%   { opacity: 1; background: #000; }
+      25%  { opacity: 1; background: #f6f5f0; }
+      45%  { opacity: 1; background: #000; }
+      65%  { opacity: 1; background: #f6f5f0; }
+      100% { opacity: 0; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .delink, .refresh { display: none; }
+      .card { opacity: 1; animation: none; }
+      .silk::before { animation: none; }
+    }
   </style>
 </head>
 <body>
 
-  <div id="bg-tile"></div>
-  <div id="bg-glow"></div>
+  <!-- de-link, as it looked -->
+  <div class="delink" aria-hidden="true">
+    <img src="logos/full-logo-transparent.svg" alt="">
+    <p>open source microreader and development kit</p>
+  </div>
 
-  <button id="fl-btn" aria-pressed="false">[ ○ ] FRONTLIGHT</button>
+  <div class="refresh" aria-hidden="true"></div>
 
-  <div id="wrap">
+  <!-- silkscreen, where it lives now -->
+  <main class="silk">
+    <article class="card">
+      <div class="card-body">
+        <div class="lockup">
+          <img class="delink-logo" src="logos/full-logo-transparent.svg" alt="de-link">
+          <svg class="arrow" viewBox="0 0 34 14" aria-hidden="true">
+            <path d="M0 7h31M25 1l7 6-7 6" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          </svg>
+          <img class="silk-logo" src="logos/silkscreen-wordmark.svg" alt="silkscreen">
+        </div>
 
-    <div id="logo-area">
-      <img class="wordmark" src="logos/full-logo-transparent.svg" alt="de-link">
-      <p id="tagline">open source microreader and development kit</p>
-    </div>
-
-    <hr>
-
-    <div id="learn-more">
-      <a href="about.html">[ learn more ]</a>
-      <a href="about.html#unit-sales">[ how do I get one? ]</a>
-      <a href="pre.html" style="margin-left:14px">[ de-link pre ]</a>
-    </div>
-
-    <hr>
-
-    <div id="platform-pitch" style="padding: 14px 0 4px; font-size: 15px; line-height: 1.85; color: #aaaaaa; max-width: 520px; margin: 0 auto; text-align: center; font-family: 'Courier New', Courier, monospace; text-shadow: 0 1px 4px rgba(0,0,0,0.8);">
-      swap the screen. reprint the case. flash your own firmware. de-link is a platform you
-      own completely, not a device you replace.<br><br>
-      <span style="font-size:13px; color:#666; letter-spacing:0.5px">
-        runs <a href="https://crosspointreader.com" target="_blank" style="color:#6699cc; text-decoration:none">crosspoint reader</a>
-        from day one. no locked bootloaders. no bricks.
-        built in open collaboration with <a href="https://freeink.org" target="_blank" style="color:#6699cc; text-decoration:none">freeink.org</a>.
-      </span>
-    </div>
-
-    <hr>
-
-    <div id="newsletter">
-      <p>mailing list &mdash; updates on hardware releases &amp; news</p>
-      <form id="kit-form" action="https://app.kit.com/forms/9627377/subscriptions" method="post">
-        <input type="email" name="email_address" placeholder="your@email.com" required>
-        <button type="submit">subscribe</button>
-      </form>
-      <div id="kit-success" style="display:none;">
-        <p style="margin:0 0 6px;">you&rsquo;re on the list.</p>
-        <p style="font-size:12px; color:#888888; margin:0; text-shadow:none;">
-          confirmation email on the way &mdash; check spam if you don&rsquo;t see it.
+        <p class="label-mono eyebrow">A new name and a new home</p>
+        <h1>de-link is now <em>silkscreen</em>.</h1>
+        <p class="lede">
+          Silkscreen is an open, repairable ESP32-S3 e-paper reader board, shaped with the
+          community, and the successor to de-link. It is designed to be built, repaired and
+          changed by the people who use it. Everything new lives at
+          <a href="https://silkscreenreader.com/">silkscreenreader.com</a>.
         </p>
       </div>
-    </div>
 
-    <hr>
+      <div class="card-foot">
+        <p class="label-mono count" id="count">
+          Taking you to silkscreenreader.com in <b id="n">5</b> <span id="unit">seconds</span>
+        </p>
+        <a class="go" href="https://silkscreenreader.com/">Go to silkscreen now <span aria-hidden="true">&rarr;</span></a>
+      </div>
+      <div class="bar" aria-hidden="true"><i></i></div>
+    </article>
+  </main>
 
-    <div id="retro-buttons">
-
-      <!-- Patreon: solid P silhouette -->
-      <a href="https://www.patreon.com/iandchasse" target="_blank" class="rlink fl-patreon">
-        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path d="M2 2h7.5C14.9 2 18 5.4 18 9.5S14.9 17 9.5 17H6v5H2V2z"/>
-        </svg>
-        <span class="rlink-text">
-          <span class="rlink-primary">support me on patreon</span>
-          <span class="rlink-sub">first dibs on exclusive updates &amp; unit sales</span>
-        </span>
-      </a>
-
-      <!-- Ko-Fi: cup + handle + heart -->
-      <a href="https://ko-fi.com/iandchasse" target="_blank" class="rlink fl-kofi">
-        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path d="M3 8h14l-1.5 12H4.5L3 8zm14 2h1.5c1.7 0 2.5.9 2.5 2.2 0 1.3-.8 2.2-2.5 2.2H17v-4.4zM10 11c-.6-1.2.1-2 1-2 .9 0 1.6.8 1 2l-1 1.8L10 11z"/>
-        </svg>
-        <span class="rlink-text">
-          <span class="rlink-primary">support me on ko-fi</span>
-          <span class="rlink-sub">first dibs on exclusive updates &amp; unit sales</span>
-        </span>
-      </a>
-
-      <!-- Discord -->
-      <a href="https://discord.gg/zCnKFt4Y4P" target="_blank" class="rlink fl-discord">
-        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"/>
-        </svg>
-        <span class="rlink-text">
-          <span class="rlink-primary">join the community</span>
-        </span>
-      </a>
-
-      <!-- GitHub -->
-      <a href="https://github.com/iandchasse/de-link" target="_blank" class="rlink fl-github">
-        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.4 3-.405 1.02.005 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.605-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
-        </svg>
-        <span class="rlink-text">
-          <span class="rlink-primary">follow the project</span>
-        </span>
-      </a>
-
-    </div>
-
-    <div id="footer">
-      &copy; de-link &mdash;
-      <a href="https://github.com/iandchasse/de-link" target="_blank">github</a>
-      &nbsp;|&nbsp;
-      <a href="https://discord.gg/zCnKFt4Y4P" target="_blank">discord</a>
-    </div>
-
-  </div>
   <script>
-    // Frontlight toggle
-    const btn = document.getElementById('fl-btn');
-    btn.addEventListener('click', () => {
-      const on = document.body.classList.toggle('lit');
-      btn.textContent = on ? '[ ◉ ] FRONTLIGHT' : '[ ○ ] FRONTLIGHT';
-      btn.setAttribute('aria-pressed', on);
-    });
+    (function () {
+      var DEST = 'https://silkscreenreader.com/';
+      var MS = 5000;
+      var start = Date.now();
+      var n = document.getElementById('n');
+      var unit = document.getElementById('unit');
+      // ?stay (or window.__noRedirect for previews) plays the transition without leaving
+      var stay = /[?&]stay\b/.test(location.search) || window.__noRedirect === true;
 
-    // Kit newsletter: submit via fetch so the page doesn't redirect
-    const kitForm = document.getElementById('kit-form');
-    const kitSuccess = document.getElementById('kit-success');
-    kitForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const email = kitForm.querySelector('input[type="email"]').value;
-      // no-cors: Kit gets the POST, we don't need to read the response
-      fetch(kitForm.action, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: 'email_address=' + encodeURIComponent(email)
-      });
-      kitForm.style.display = 'none';
-      kitSuccess.style.display = 'block';
-    });
-
-    // 10-click logo easter egg → full editor
-    let logoClicks = 0, logoTimer;
-    document.querySelector('#logo-area img.wordmark').addEventListener('click', () => {
-      clearTimeout(logoTimer);
-      logoClicks++;
-      if (logoClicks >= 10) {
-        logoClicks = 0;
-        window.location.href = 'viewer.html?edit';
-      } else {
-        logoTimer = setTimeout(() => { logoClicks = 0; }, 2000);
+      function tick() {
+        var left = Math.max(0, Math.ceil((MS - (Date.now() - start)) / 1000));
+        n.textContent = left;
+        unit.textContent = left === 1 ? 'second' : 'seconds';
+        if (left > 0) { setTimeout(tick, 200); return; }
+        if (stay) {
+          var c = document.getElementById('count');
+          c.innerHTML = 'Redirect paused &middot; ';
+          var b = document.createElement('button');
+          b.className = 'replay label-mono';
+          b.type = 'button';
+          b.textContent = 'Replay';
+          b.onclick = function () { location.reload(); };
+          c.appendChild(b);
+        }
       }
-    });
+      tick();
+      if (!stay) setTimeout(function () { location.replace(DEST); }, MS);
+    })();
   </script>
-  <script src="topbar.js"></script>
 </body>
 </html>
